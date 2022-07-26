@@ -1,0 +1,57 @@
+﻿@page "/pharmacy-list"
+@using ePrescription.Data
+@using ePrescription.Services
+@using ePrescription.Pages.Pharmacies
+@inject PharmacyService _service;
+<h3>Pharmacy List</h3>
+
+@if(@pharmacies == null)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+}
+else
+{
+    <MudTable Items="@pharmacies" Hover="true" >
+        <ToolBarContent>
+           <MudButton Variant = "Variant.Filled" Color="Color.Info" Href="/pharmacy/add">Add Practice</MudButton>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Contact Number</MudTh>
+            <MudTh>Address Line 1</MudTh>
+            <MudTh>Address Line 2</MudTh>
+            <MudTh>Suburb</MudTh>
+            <MudTh>Options</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="ContactNo">@context.ContactNo</MudTd>
+            <MudTd DataLabel="AddressLine1">@context.AddressLine1</MudTd>
+            <MudTd DataLabel="AddressLine2">@context.AddressLine2</MudTd>
+            <MudTd DataLabel="SuburbId">@context.SuburbID</MudTd>
+            <MudTd>
+                <a class="btn btn-primary btn-sm" href="/pharmacy/edit/@context.Id">Update</a>
+               @* <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))">Delete</MudButton>*@
+            </MudTd>
+         
+        </RowTemplate>
+    </MudTable>
+}
+@code {
+    private List<Data.Pharmacy> pharmacies { get; set; }
+    private string? searchString1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PharmaciesList();
+    }
+
+    private async Task PharmaciesList()
+    {
+        pharmacies = await _service.GetPharmaciesAsync();
+    }
+}

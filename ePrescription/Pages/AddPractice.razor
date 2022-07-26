@@ -1,0 +1,115 @@
+﻿@page "/practice/new"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Services
+@using System.ComponentModel.DataAnnotations
+@attribute [Authorize(Roles = "Admin")]
+
+@inject PracticeService _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+<h3>AddPractice</h3>
+
+
+
+                    @if(Suburbs == null)
+                    {
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true"/> 
+                    }
+                    else
+                    {
+                        <EditForm Model="@practice" OnValidSubmit="OnValidSubmit">
+                            <DataAnnotationsValidator/>
+                            <MudGrid>
+                                <MudItem xs="12" sm="12">
+                                    <MudCard>
+                                        <MudCardContent>
+                                            <MudTextField Label="Name"
+                                                          @bind-Value="practice.Name" For="@(() => practice.Name)"/>
+                                            <MudTextField Label="Email" 
+                                                          @bind-Value="practice.Email" For="@(() => practice.Email)"/>
+                                            <MudTextField Label="Contact Number"
+                                                          @bind-Value="practice.ContactNo" For="@(() => practice.ContactNo)"/>
+                                            <MudTextField Label="Practice Number"
+                                                           @bind-Value="practice.PracticeNo" For="@(() => practice.PracticeNo)"/>
+                                            <MudTextField Label="Address Line 1"
+                                                           @bind-Value="practice.AddressLine1" For="@(() => practice.AddressLine1)"/>
+                                            <MudTextField Label="Address Line 2"
+                                                           @bind-Value="practice.AddressLine2" For="@(() => practice.AddressLine2)"/>
+                                            <MudSelect Label="Select Suburb"  @bind-Value="@practice.SuburbID" Placeholder="Please Select Suburb">
+                                                @if(Suburbs == null)
+                                                    {
+                                                       
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach(var s in Suburbs)
+                                                        {
+                                                            <MudSelectItem Value=s.Id >
+                                                                @s.Name
+                                                            </MudSelectItem>
+                                                        }
+                                                    }
+                                            </MudSelect>
+                                        </MudCardContent>
+                                        <MudCardActions>
+                                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                                        </MudCardActions>
+                                    </MudCard>
+                                </MudItem>
+                            </MudGrid>
+                        </EditForm>
+                    }
+                    
+                
+                
+      
+   
+
+
+
+@code {
+   
+    private Data.Practice practice = new Data.Practice() ;
+
+
+    bool success;
+    private List<Suburb>? Suburbs { get; set; }
+
+    //////protected override async Task OnParametersSetAsync()
+    //////{
+    //////    Suburbs = await _service.GetSuburbsAsync();
+    //////}
+
+    protected override async Task OnInitializedAsync()
+    {
+        Suburbs = await _service.GetSuburbsAsync();
+        //practice = await UpSert(PId);
+    }
+
+
+    private async void OnValidSubmit()
+    {
+        success = true;
+        //StateHasChanged();
+
+        await _service.AddPractice(practice);
+        _snackbar.Add("Practice successfully added!", Severity.Success);
+        _nav.NavigateTo("/practice-list");
+    }
+
+    private async Task<Data.Practice> UpSert(int? Id)
+    {
+
+        if(Id == null)
+        {
+            practice = new Data.Practice();
+        }
+        else
+        {
+            practice = await _service.GetPracticeAsync(Convert.ToInt32(Id));
+        }
+        return  practice;
+    }
+
+}

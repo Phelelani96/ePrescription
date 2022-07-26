@@ -1,0 +1,117 @@
+﻿@page "/medical-history/add/{id}"
+@using ePrescription.Data
+<h3>Add</h3>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">Medical History for: Patient Name</MudPaper>
+    </MudItem>
+    <MudItem xs="6" Class="h-auto">
+        <MudPaper Class="d-block align-center justify-center mud-width-full py-2 px-md-8">
+           <MudSelect T="string" Label="Disease" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("Alzheimers")" />
+                <MudSelectItem Value="@("ALS")" />
+                <MudSelectItem Value="@("Migranes")" />
+           </MudSelect>
+           <MudSelect T="Medicine" Label="Medication" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" MultiSelection = "true" @bind-SelectedValues="Medicines" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
+               @foreach(var med in MED)
+                {
+                    <MudSelectItem T="Medicine" Value="@med">@med.Name</MudSelectItem>
+                }
+               @* <MudSelectItem T="int" Value="1">Medicine 1</MudSelectItem>
+                <MudSelectItem T="int" Value="2">Medicine 2</MudSelectItem>
+                <MudSelectItem T="int" Value="3">Medicine 3</MudSelectItem>
+                <MudSelectItem T="int" Value="4">Medicine 4</MudSelectItem>
+                <MudSelectItem T="int" Value="5">Medicine 5</MudSelectItem>
+                <MudSelectItem T="int" Value="6">Medicine 6</MudSelectItem>*@
+            </MudSelect>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6" Class="h-auto">
+        <MudPaper Class="d-block align-center justify-center mud-width-full py-2 px-md-8">
+            @if(Medicines != null)
+            {
+                @foreach(var x in Medicines)
+                {
+                    <p>
+                        @x.Name
+                    </p>
+                }
+            }
+            
+
+        </MudPaper>
+
+    </MudItem>
+     <MudItem xs="12">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
+            <MudButton Variant = "Variant.Filled" Color = "Color.Info">
+                Save
+            </MudButton>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public string? id {get;set;}
+
+    private IEnumerable<Medicine> Medicines { get; set; } 
+    private List<Medicine> medic { get; set; }
+    private Medicine med { get; set; }
+
+    //private void GetMedicine()
+    //{
+
+    //}
+    private string GetMultiSelectionText(List<string> x)
+    {
+       return $"{x.Count} Medicine{(x.Count > 1 ? "s have":" has")} been selected";
+    }
+
+    private List<Medicine> MED = new List<Medicine>()
+    {
+        new Medicine
+        {
+            Id = 1,
+            Name = "Medicine 1",
+            DosageFormId = 1,
+            ScheduledId = 1
+        },
+         new Medicine
+        {
+            Id = 1,
+            Name = "Medicine 2",
+            DosageFormId = 1,
+            ScheduledId = 1
+        },
+         new Medicine
+        {
+            Id = 1,
+            Name = "Medicine 3",
+            DosageFormId = 1,
+            ScheduledId = 1
+        },
+         new Medicine
+        {
+            Id = 1,
+            Name = "Medicine 4",
+            DosageFormId = 1,
+            ScheduledId = 1
+        },
+         new Medicine
+        {
+            Id = 1,
+            Name = "Medicine 5",
+            DosageFormId = 1,
+            ScheduledId = 1
+        },
+         new Medicine
+        {
+            Id = 1,
+            Name = "Medicine 6",
+            DosageFormId = 1,
+            ScheduledId = 1
+        }
+    };
+}

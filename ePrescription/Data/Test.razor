@@ -1,0 +1,10 @@
+﻿@page "/test/{value}"
+<h3>Test</h3>
+
+<p>@value</p>
+
+@code {
+    [Parameter]
+    public string value { get; set; }
+}
+

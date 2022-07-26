@@ -1,0 +1,13 @@
+﻿@page "/patient/{Id}"
+<h3>Patient</h3>
+
+@if(Id == null)
+{
+    
+}
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+}

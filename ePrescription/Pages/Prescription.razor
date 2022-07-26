@@ -1,0 +1,38 @@
+﻿@page "/prescription/{PId}"
+@using Microsoft.AspNetCore.Identity
+@using ePrescription.Data
+@using ePrescription.Areas.Identity.Data
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@inject SignInManager<User> _sign
+@inject UserManager<User> _userManager
+
+<h3>Prescription</h3>
+
+@code {
+    [Parameter]
+    public string? PId { get; set; }
+
+    private Data.Prescription P = new Data.Prescription();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        //if(user.Identity.IsAuthenticated)
+        //{
+
+        //}
+        if(PId != null)
+        {
+            
+            P.Date = System.DateTime.Today;
+            P.PatientId = PId;
+            P.DoctorId = _userManager.GetUserId(user);
+        }
+       
+
+    }
+}

@@ -1,0 +1,88 @@
+﻿@page "/practice/edit/{PId:int}"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Services
+@attribute [Authorize(Roles = "Admin")]
+
+@inject PracticeService _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+
+
+  <h3>Update Practice</h3>
+    
+    @if(practice == null)
+    {
+        <p>Loading . . .</p>
+    }
+    else
+    {
+        <EditForm Model="@practice" OnValidSubmit="OnValidSubmit">
+                            <DataAnnotationsValidator/>
+                            <MudGrid>
+                                <MudItem xs="12" sm="12">
+                                    <MudCard>
+                                        <MudCardContent>
+                                            <MudTextField Label="Id"
+                                                          @bind-Value="practice.Id" For="@(() => practice.Id)"/>
+                                            <MudTextField Label="Name"
+                                                          @bind-Value="practice.Name" For="@(() => practice.Name)"/>
+                                            <MudTextField Label="Email" 
+                                                          @bind-Value="practice.Email" For="@(() => practice.Email)"/>
+                                            <MudTextField Label="Contact Number"
+                                                          @bind-Value="practice.ContactNo" For="@(() => practice.ContactNo)"/>
+                                            <MudTextField Label="Practice Number"
+                                                           @bind-Value="practice.PracticeNo" For="@(() => practice.PracticeNo)"/>
+                                            <MudTextField Label="Address Line 1"
+                                                           @bind-Value="practice.AddressLine1" For="@(() => practice.AddressLine1)"/>
+                                            <MudTextField Label="Address Line 2"
+                                                           @bind-Value="practice.AddressLine2" For="@(() => practice.AddressLine2)"/>
+                                            <MudSelect Label="Select Suburb" @bind-Value="@practice.SuburbID" Placeholder="Please Select Suburb">
+                                                @if(Suburbs == null)
+                                                    {
+                                                       
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach(var s in Suburbs)
+                                                        {
+                                                            <MudSelectItem Value=s.Id >
+                                                                @s.Name
+                                                            </MudSelectItem>
+                                                        }
+                                                    }
+                                            </MudSelect>
+                                        </MudCardContent>
+                                        <MudCardActions>
+                                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                                        </MudCardActions>
+                                    </MudCard>
+                                </MudItem>
+                            </MudGrid>
+        </EditForm>
+    }
+
+@code {
+     [Parameter]
+    public int? PId { get; set; }
+
+    private Data.Practice practice;
+      
+    bool success;
+    private List<Suburb>? Suburbs { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        practice = await _service.GetPracticeAsync(Convert.ToInt32(PId));
+    }
+
+    private async void OnValidSubmit()
+    {
+        success = true;
+        //StateHasChanged();
+
+        await _service.UpdatePractice(PId,practice);
+        _snackbar.Add("Practice successfully Updated!", Severity.Success);
+        _nav.NavigateTo("/practice-list");
+    }
+}

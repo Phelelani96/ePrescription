@@ -1,0 +1,77 @@
+﻿@page "/pharmacy/add"
+@using ePrescription.Services
+@using ePrescription.Pages.Pharmacies
+@inject PharmacyService _service
+@inject ISnackbar _snackbar
+@inject NavigationManager _nav
+
+<h3>Add Pharmacy</h3>
+
+<EditForm Model="@pharmacy" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+                            <MudGrid>
+                                <MudItem xs="12" sm="12">
+                                    <MudCard>
+                                        <MudCardContent>
+                                            <MudTextField Label="Name"
+                                                          @bind-Value="pharmacy.Name" For="@(() => pharmacy.Name)"/>
+                                            <MudTextField Label="Email" 
+                                                          @bind-Value="pharmacy.Email" For="@(() => pharmacy.Email)"/>
+                                            <MudTextField Label="Contact Number"
+                                                          @bind-Value="pharmacy.ContactNo" For="@(() => pharmacy.ContactNo)"/>
+                                            <MudTextField Label="Practice Number"
+                                                           @bind-Value="pharmacy.LicenceNo" For="@(() => pharmacy.LicenceNo)"/>
+                                            <MudTextField Label="Address Line 1"
+                                                           @bind-Value="pharmacy.AddressLine1" For="@(() => pharmacy.AddressLine1)"/>
+                                            <MudTextField Label="Address Line 2"
+                                                           @bind-Value="pharmacy.AddressLine2" For="@(() => pharmacy.AddressLine2)"/>
+                                            <MudSelect Label="Select Suburb"  @bind-Value="@pharmacy.SuburbID" Placeholder="Please Select Suburb">
+                                                @if(Suburbs == null)
+                                                    {
+                                                       
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach(var s in Suburbs)
+                                                        {
+                                                            <MudSelectItem Value=s.Id >
+                                                                @s.Name
+                                                            </MudSelectItem>
+                                                        }
+                                                    }
+                                            </MudSelect>
+                                        </MudCardContent>
+                                        <MudCardActions>
+                                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                                        </MudCardActions>
+                                    </MudCard>
+                                </MudItem>
+                            </MudGrid>
+</EditForm>
+
+
+@code {
+    private Pharmacy pharmacy = new Pharmacy();
+    private List<Suburb> Suburbs { get; set; }
+    bool result = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Suburbs = await _service.GetSuburbsAsync();
+    }
+
+    private async Task Save()
+    {
+        result = await _service.AddPharmacyAsync(pharmacy);
+        if(result == true)
+        {
+            _snackbar.Add("Pharmacy added successfully!.", Severity.Success);
+            _nav.NavigateTo("/pharmacy-list");
+        }
+        else
+        {
+            _snackbar.Add("Failed to add Pharmacy, Please try again.", Severity.Warning);   
+        }
+
+    }
+}
