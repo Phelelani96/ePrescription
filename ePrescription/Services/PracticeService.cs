@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Services
 {
-    public class PracticeService
+    public class PracticeService : IPractice
     {
         private readonly ApplicationDbContext _context;
 
@@ -50,7 +50,7 @@ namespace ePrescription.Services
             
                 await _context.SaveChangesAsync();
         }
-        public async Task UpdatePractice(int? Id, Practice practice)
+        public async Task UpdatePractice(int? Id)
         {
             if (Id != null)
             {

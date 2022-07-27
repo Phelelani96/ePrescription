@@ -4,7 +4,7 @@
 @using ePrescription.Services
 @attribute [Authorize(Roles = "Admin")]
 
-@inject PracticeService _service
+@inject IPractice _service
 @inject NavigationManager _nav
 @inject ISnackbar _snackbar
 
@@ -81,7 +81,7 @@
         success = true;
         //StateHasChanged();
 
-        await _service.UpdatePractice(PId,practice);
+        await _service.UpdatePractice(PId);
         _snackbar.Add("Practice successfully Updated!", Severity.Success);
         _nav.NavigateTo("/practice-list");
     }
