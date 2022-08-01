@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ePrescription.Shared;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Services
 {
-    public class PracticeService : IPractice
+    public class PracticeService: IPracticeService
     {
         private readonly ApplicationDbContext _context;
 
@@ -12,67 +13,127 @@ namespace ePrescription.Services
             _context = context;
         }
 
-        public async Task<List<Practice>> GetAll()
+        public async Task<ServiceResponse<List<Practice>>> GetAll()
         {
-            return await _context.Practice.ToListAsync();
+            var response = new ServiceResponse<List<Practice>>();
+            try
+            {
+                response.Data = await _context.Practice.ToListAsync();
+                return response;
+            }
+            catch
+            {
+                response.Message = "An error occured while retrieving the data. If this persists, please contact the system administrator";
+                response.Success = false;
+                return response;
+            }
+           
         }
-        public async Task<Practice> GetPracticeAsync(int id)
+        public async Task<ServiceResponse<Practice>> GetPracticeAsync(int id)
         {
-            var practice =  await _context.Practice.FirstOrDefaultAsync(p => p.Id == id);
-            return practice;
+            var response = new ServiceResponse<Practice>();
+            try
+            {
+                response.Data = await _context.Practice.FirstOrDefaultAsync(p => p.Id == id);
+                if(response.Data == null)
+                {
+                    response.Message = "Practice does not exist";
+                    response.Success = false;
+                }
+              return response;
+            }
+            catch
+            {
+                response.Message = "Practice does not exist";
+                response.Success = false;
+                return response;
+            }
+            //var practice =  await _context.Practice.FirstOrDefaultAsync(p => p.Id == id);
+            //return practice;
         }
 
-        //[HttpPost]
-        public async Task<bool> DeletePracticeAsync(int? id)
+      
+        public async Task<ServiceResponse<bool>> DeletePracticeAsync(int id)
         {
-            bool result = false;
-
-            if (id != null)
+            var response = new ServiceResponse<bool>();
+            try
             {
                 var p = await _context.Practice.FirstOrDefaultAsync(p => p.Id == id);
                 if (p != null)
                 {
                     _context.Practice.Remove(p);
                     _context.SaveChanges();
-                    result = true;
+                    response.Message = "Practice successfully deleted!";
                 }
                 else
                 {
-                    result = false;
+                    response.Success = false;
+                    response.Message = "Practice not found";
                 }
+                return response;
             }
-            return result;
-        }
-        public  async Task AddPractice(Practice practice)
-        {
-           
-               _context.Practice.Add(practice);
-            
-                await _context.SaveChangesAsync();
-        }
-        public async Task UpdatePractice(int? Id)
-        {
-            if (Id != null)
+            catch
             {
-                var p = await _context.Practice.FirstOrDefaultAsync(p => p.Id == Id);
-                if (p != null)
-                {
-                    _context.Practice.Update(p);
-                }
-                //else
-                //{
-
-                //}
+                response.Success = false;
+                response.Message = "Failed to delete Practice.If this persists, please contact your system administrator.";
+                return response;
             }
-
-            //_context.Practice.Add(practice);
-
-            await _context.SaveChangesAsync();
         }
+
 
         public async Task<List<Suburb>> GetSuburbsAsync()
         {
             return await _context.Suburb.ToListAsync();
         }
+
+        public async Task<ServiceResponse<bool>> AddPractice(Practice practice)
+        {
+            var response = new ServiceResponse<bool>();
+            try
+            {
+                await _context.Practice.AddAsync(practice);
+                await _context.SaveChangesAsync();
+                response.Data = true;
+                response.Message = practice.Name + "Added successfully!";
+                return response;
+            }
+            catch
+            {
+                response.Data = false;
+                response.Message = "Failed to add Practice. If this persists, please contact your system administrator.";
+                return response;
+            }
+        }
+
+        public async Task<ServiceResponse<bool>> UpdatePractice(int Id)
+        {
+            var response = new ServiceResponse<bool>();
+            try
+            {
+                var p = await _context.Practice.FindAsync(Id);
+                if(p == null)
+                {
+                    response.Data = false;
+                    response.Success = false;
+                    response.Message = "Failed to update practice.";
+                }
+                else
+                {
+                    _context.Practice.Update(p);
+                    await _context.SaveChangesAsync();
+                    response.Data = true;
+                    response.Message = "Successfully updated Practice";
+                }
+                return response;
+            }
+            catch
+            {
+                response.Data = false;
+                response.Success = false;
+                response.Message = "Failed to update practice. If this persists, please contact your system administrator. ";
+                return response;
+            }
+        }
+
     }
 }

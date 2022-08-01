@@ -2,7 +2,7 @@
 @using ePrescription.Services
 @using ePrescription.Pages.Shared
 
-@inject IPractice _service
+@inject IPracticeService _service
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
 
@@ -50,14 +50,15 @@
 
     private async Task DeletePractice(int? id)
     {
-        bool x;
+        var x = new ServiceResponse<bool>();
+        
         if(id != null)
         {
             var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
             if(p != null)
             {
                 var parameters = new DialogParameters();
-                parameters.Add("ContentText", "Are you sure you want to delete " + p.Name.ToString() + "?");
+                parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
                 parameters.Add("ButtonText", "Delete");
                 parameters.Add("Color", Color.Error);
 
@@ -69,15 +70,15 @@
 
                 if (!result.Cancelled)
                 {
-                    x = await _service.DeletePracticeAsync(p.Id);
-                    if(x == true)
+                    x = await _service.DeletePracticeAsync(p.Data.Id);
+                    if(x.Success == true)
                     {
-                        _snackbar.Add(p.Name + " Successfully deleted!", Severity.Error);
+                        _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
                         await PracticeList();
                     }
                     else
                     {
-                        _snackbar.Add("Failed to remove practice, please try again", Severity.Warning);
+                        _snackbar.Add(p.Message, Severity.Warning);
                     }
                 }
 
@@ -88,6 +89,8 @@
 
     private async Task PracticeList()
     {
-        practices = await _service.GetAll();
+        var P = await _service.GetAll();
+
+        practices = P.Data;
     }
 }

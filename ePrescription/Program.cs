@@ -33,7 +33,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<User>>();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<PatientsController>();
-builder.Services.AddScoped<IPractice, PracticeService>();
+builder.Services.AddScoped<IPracticeService, PracticeService>();
+builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+
 builder.Services.AddScoped<PharmacyService>();
 builder.Services.AddMudServices();
 var app = builder.Build();
