@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ePrescription.Data;
 
@@ -11,9 +12,10 @@ using ePrescription.Data;
 namespace ePrescription.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220803132723_AddSizeModel")]
+    partial class AddSizeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,7 +143,7 @@ namespace ePrescription.Data.Migrations
                             Id = "abc-123-ABC-246-aec",
                             AccessFailedCount = 0,
                             AddressLine1 = "14 8th Avenue",
-                            ConcurrencyStamp = "42693a4a-9d51-4d75-9262-5baf5839bc78",
+                            ConcurrencyStamp = "7adf0d5b-f9ca-4ae3-9763-0b5aa07c5464",
                             Discriminator = "Admin",
                             Email = "tonystark@gmail.com",
                             EmailConfirmed = true,
@@ -151,10 +153,10 @@ namespace ePrescription.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TONYSTARK@GMAIL.COM",
                             NormalizedUserName = "TONYSTARK@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOa1NgrWoy6X0oetREnzzW7Iw08OYQjZJ4UG7+/C7oLRheOXn0+T3dpVH8bbSqpqJA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGCs9fcRZ3fB9e7hkFrKAopUEqwzXMVx6jn/SV4yl+GxNf6t+zPcMhQThG3ToG7/4Q==",
                             PhoneNumber = "0780509071",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "279c9b5b-5134-4e7e-8128-3ba780730d4a",
+                            SecurityStamp = "22aacdad-1bc7-427c-899d-9b0773a6cc3d",
                             SuburbID = 1,
                             TwoFactorEnabled = false,
                             UserName = "tonystark@gmail.com"
@@ -164,7 +166,7 @@ namespace ePrescription.Data.Migrations
                             Id = "abc-123-ABC-246-eee",
                             AccessFailedCount = 0,
                             AddressLine1 = "1 2th Avenue",
-                            ConcurrencyStamp = "30f6d275-a660-4e43-bbac-d8be8379e17a",
+                            ConcurrencyStamp = "8939e618-a15d-47a8-b8fe-d348a5d48347",
                             Discriminator = "Doctor",
                             Email = "strange@gmail.com",
                             EmailConfirmed = true,
@@ -174,13 +176,13 @@ namespace ePrescription.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "STRANGE@GMAIL.COM",
                             NormalizedUserName = "STRANGE@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAn/9qy3Z/RUfcZ5uMvQR07O6Ac/ki+8ZhDrJfGxgMszfG9NOhkR852DSBnOGiSojQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIwqlQX2cWCqEaPvsoHvoBsPUz9cL2GVOv8TL05Qz8WWAxRjuJ18P21CZzyqTcvD4g==",
                             PhoneNumber = "0780509025",
                             PhoneNumberConfirmed = true,
                             PracticeId = 3,
                             QualificationId = 1,
                             RegistrationNo = "123456789",
-                            SecurityStamp = "fd0396db-e85c-4e4e-9c7f-bb8391dcef64",
+                            SecurityStamp = "a2426180-c2cf-4688-a7bb-df6651ae0d85",
                             SuburbID = 1,
                             TwoFactorEnabled = false,
                             UserName = "strange@gmail.com"
@@ -190,7 +192,7 @@ namespace ePrescription.Data.Migrations
                             Id = "abc-123-ABC-246-ccc",
                             AccessFailedCount = 0,
                             AddressLine1 = "8th Avenue",
-                            ConcurrencyStamp = "f7757a44-55bb-4ea6-9a4a-4160acf85cf7",
+                            ConcurrencyStamp = "dae94cc8-ed9a-4df1-997c-febbdb1bda72",
                             Discriminator = "Pharmacist",
                             Email = "parker@gmail.com",
                             EmailConfirmed = true,
@@ -200,11 +202,11 @@ namespace ePrescription.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "PARKER@GMAIL.COM",
                             NormalizedUserName = "PARKER@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIOtAaIsStaXp6InvLsQdqJXUvY9AEy0a8GNAVejRZUrCwpyVFWI1Z+OGQSgueN53Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPD23rr0Dbw7u2RVJjql0+Rr0BMn0Zb8HPL9yPdD09MsyuEzAHjtAzHxEZSfJK/mhA==",
                             PharmacyId = 2,
                             PhoneNumber = "0780509071",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "35f904b5-3736-4145-9fab-0da3ef243d60",
+                            SecurityStamp = "7d675790-3159-44df-83d3-f6dc8268395e",
                             SuburbID = 3,
                             TwoFactorEnabled = false,
                             UserName = "parker@gmail.com"
@@ -435,10 +437,10 @@ namespace ePrescription.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Dosage_FormId")
+                    b.Property<int>("DosageFormId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MedSizeId")
+                    b.Property<int>("Dosage_FormId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -448,13 +450,19 @@ namespace ePrescription.Data.Migrations
                     b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ScheduledId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Dosage_FormId");
 
-                    b.HasIndex("MedSizeId");
-
                     b.HasIndex("ScheduleId");
+
+                    b.HasIndex("SizeId");
 
                     b.ToTable("Medicine");
                 });
@@ -852,28 +860,28 @@ namespace ePrescription.Data.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "a37d3798-eb85-44c0-9e8e-8e1a2b9bb5e7",
+                            ConcurrencyStamp = "3d1f4f3c-b0be-4916-a016-3998817a111f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "42551a2b-f174-4202-bf62-e72f6882413a",
+                            ConcurrencyStamp = "9b7e7604-fb4f-471c-8e73-d37c60873ae7",
                             Name = "Doctor",
                             NormalizedName = "DOCTOR"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "0b28f072-9040-44d7-bf75-0ce6a29df154",
+                            ConcurrencyStamp = "a999a052-2964-41b0-80d7-4be9ce676a47",
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "681bc315-9cbf-4ac4-a9cd-d73c9b4998d0",
+                            ConcurrencyStamp = "cf80b0d5-be81-4dac-9361-7b94d88b9939",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         });
@@ -1146,15 +1154,15 @@ namespace ePrescription.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ePrescription.Data.MedSize", "Size")
-                        .WithMany("Medicines")
-                        .HasForeignKey("MedSizeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ePrescription.Data.Schedule", "Schedule")
                         .WithMany("Medicines")
                         .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ePrescription.Data.MedSize", "Size")
+                        .WithMany("Medicines")
+                        .HasForeignKey("SizeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

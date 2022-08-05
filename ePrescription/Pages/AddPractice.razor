@@ -67,11 +67,11 @@
 
 
 @code {
-   
+
     private Data.Practice practice = new Data.Practice() ;
 
 
-    bool success;
+    //bool success;
     private List<Suburb>? Suburbs { get; set; }
 
     //////protected override async Task OnParametersSetAsync()
@@ -88,26 +88,33 @@
 
     private async void OnValidSubmit()
     {
-        success = true;
+        //success = true;
         //StateHasChanged();
 
-        await _service.AddPractice(practice);
-        _snackbar.Add("Practice successfully added!", Severity.Success);
-        _nav.NavigateTo("/practice-list");
-    }
-
-    private async Task<Data.Practice> UpSert(int? Id)
-    {
-
-        if(Id == null)
+        var x = await _service.AddPractice(practice);
+        if(x.Success)
         {
-            practice = new Data.Practice();
+            _snackbar.Add(x.Message, Severity.Success);
+            _nav.NavigateTo("/practice-list");
         }
         else
         {
-            practice = await _service.GetPracticeAsync(Convert.ToInt32(Id));
+            _snackbar.Add(x.Message, Severity.Warning);
         }
-        return  practice;
     }
+
+    //private async Task<Data.Practice> UpSert(int? Id)
+    //{
+
+    //    //if(Id == null)
+    //    //{
+    //    //    practice = new Data.Practice();
+    //    //}
+    //    //else
+    //    //{
+    //    //    practice = await _service.GetPracticeAsync(Convert.ToInt32(Id));
+    //    //}
+    //    //return  practice;
+    //}
 
 }

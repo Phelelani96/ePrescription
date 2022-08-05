@@ -1,5 +1,9 @@
 ﻿@page "/medical-history/add/{id}"
 @using ePrescription.Data
+@using ePrescription.Services
+
+@inject IMedicalHistoryService _service
+@inject ISnackbar _snack
 <h3>Add</h3>
 
 <MudGrid>
@@ -8,23 +12,27 @@
     </MudItem>
     <MudItem xs="6" Class="h-auto">
         <MudPaper Class="d-block align-center justify-center mud-width-full py-2 px-md-8">
-           <MudSelect T="string" Label="Disease" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-                <MudSelectItem Value="@("Alzheimers")" />
-                <MudSelectItem Value="@("ALS")" />
-                <MudSelectItem Value="@("Migranes")" />
-           </MudSelect>
-           <MudSelect T="Medicine" Label="Medication" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" MultiSelection = "true" @bind-SelectedValues="Medicines" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
-               @foreach(var med in MED)
+            <EditForm Model="@history" OnSubmit="HandleSubmit">
+                @if(Diagnoses != null)
                 {
-                    <MudSelectItem T="Medicine" Value="@med">@med.Name</MudSelectItem>
+                    <MudSelect T="int" Label="Disease" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" id = "Disease">
+                        @foreach(var d in Diagnoses)
+                        {
+                            <MudSelectItem Value="@d.Id"> @d.Description</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
-               @* <MudSelectItem T="int" Value="1">Medicine 1</MudSelectItem>
-                <MudSelectItem T="int" Value="2">Medicine 2</MudSelectItem>
-                <MudSelectItem T="int" Value="3">Medicine 3</MudSelectItem>
-                <MudSelectItem T="int" Value="4">Medicine 4</MudSelectItem>
-                <MudSelectItem T="int" Value="5">Medicine 5</MudSelectItem>
-                <MudSelectItem T="int" Value="6">Medicine 6</MudSelectItem>*@
-            </MudSelect>
+            </EditForm>
+           
+            @if(medic != null)
+            {
+                <MudSelect T="Medicine" Label="Medication" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" MultiSelection = "true" @bind-SelectedValues="Medicines" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
+                   @foreach(var med in medic)
+                    {
+                        <MudSelectItem T="Medicine" Value="@med">@med.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            }
         </MudPaper>
     </MudItem>
     <MudItem xs="6" Class="h-auto">
@@ -45,7 +53,7 @@
     </MudItem>
      <MudItem xs="12">
         <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
-            <MudButton Variant = "Variant.Filled" Color = "Color.Info">
+            <MudButton Variant = "Variant.Filled" Color = "Color.Info" ButtonType="ButtonType.Submit" >
                 Save
             </MudButton>
         </MudPaper>
@@ -59,6 +67,14 @@
     private IEnumerable<Medicine> Medicines { get; set; } 
     private List<Medicine> medic { get; set; }
     private Medicine med { get; set; }
+    private List<Diagnosis> Diagnoses { get; set; }
+    private Medical_History history = new Medical_History();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetDiagnosis();
+        await GetMedicine();
+    }
 
     //private void GetMedicine()
     //{
@@ -66,52 +82,46 @@
     //}
     private string GetMultiSelectionText(List<string> x)
     {
-       return $"{x.Count} Medicine{(x.Count > 1 ? "s have":" has")} been selected";
+        return $"{x.Count} Medicine{(x.Count > 1 ? "s have":" has")} been selected";
     }
 
-    private List<Medicine> MED = new List<Medicine>()
+
+
+    private async Task HandleSubmit()
     {
-        new Medicine
+        var x = new ServiceResponse<bool>();
+        if(Medicines == null)
         {
-            Id = 1,
-            Name = "Medicine 1",
-            DosageFormId = 1,
-            ScheduledId = 1
-        },
-         new Medicine
-        {
-            Id = 1,
-            Name = "Medicine 2",
-            DosageFormId = 1,
-            ScheduledId = 1
-        },
-         new Medicine
-        {
-            Id = 1,
-            Name = "Medicine 3",
-            DosageFormId = 1,
-            ScheduledId = 1
-        },
-         new Medicine
-        {
-            Id = 1,
-            Name = "Medicine 4",
-            DosageFormId = 1,
-            ScheduledId = 1
-        },
-         new Medicine
-        {
-            Id = 1,
-            Name = "Medicine 5",
-            DosageFormId = 1,
-            ScheduledId = 1
-        },
-         new Medicine
-        {
-            Id = 1,
-            Name = "Medicine 6",
-            DosageFormId = 1,
-            ScheduledId = 1
+
         }
-    };
+        else
+        {
+            if(id != null)
+            {
+                history.PatientId = id;
+                history.DiagnosisDate = System.DateTime.Today;
+
+                x = await _service.AddMedicalHistoryAsync(history, Medicines);
+                if(x.Data == true)
+                {
+                    _snack.Add(x.Message, MudBlazor.Severity.Success);
+                }
+                else
+                {
+                    _snack.Add(x.Message, MudBlazor.Severity.Warning);
+                }
+
+            }
+        }
+    }
+
+    private async Task GetDiagnosis()
+    {
+        Diagnoses = await _service.GetDiagnosesAsync();
+    }
+
+    private async Task GetMedicine()
+    {
+        medic = await _service.GetMedicinesAsync();
+    }
 }

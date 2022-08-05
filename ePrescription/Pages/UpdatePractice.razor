@@ -2,7 +2,7 @@
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using ePrescription.Services
-@attribute [Authorize(Roles = "Admin")]
+@*@attribute [Authorize(Roles = "Admin")]*@
 
 @inject IPracticeService _service
 @inject NavigationManager _nav
@@ -23,8 +23,8 @@
                                 <MudItem xs="12" sm="12">
                                     <MudCard>
                                         <MudCardContent>
-                                            <MudTextField Label="Id"
-                                                          @bind-Value="practice.Id" For="@(() => practice.Id)"/>
+                                           @* <MudTextField Label="Id"
+                                                          @bind-Value="practice.Id" For="@(() => practice.Id)"/>*@
                                             <MudTextField Label="Name"
                                                           @bind-Value="practice.Name" For="@(() => practice.Name)"/>
                                             <MudTextField Label="Email" 
@@ -63,17 +63,18 @@
     }
 
 @code {
-     [Parameter]
+    [Parameter]
     public int? PId { get; set; }
 
     private Data.Practice practice;
-      
+
     bool success;
     private List<Suburb>? Suburbs { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        practice = await _service.GetPracticeAsync(Convert.ToInt32(PId));
+        var p = await _service.GetPracticeAsync(Convert.ToInt32(PId));
+        practice = p.Data;
     }
 
     private async void OnValidSubmit()
@@ -81,7 +82,7 @@
         success = true;
         //StateHasChanged();
 
-        await _service.UpdatePractice(PId);
+        var x = await _service.UpdatePractice(practice.Id);
         _snackbar.Add("Practice successfully Updated!", Severity.Success);
         _nav.NavigateTo("/practice-list");
     }

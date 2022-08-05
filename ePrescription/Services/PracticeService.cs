@@ -94,7 +94,7 @@ namespace ePrescription.Services
                 await _context.Practice.AddAsync(practice);
                 await _context.SaveChangesAsync();
                 response.Data = true;
-                response.Message = practice.Name + "Added successfully!";
+                response.Message = practice.Name + " Added successfully!";
                 return response;
             }
             catch
