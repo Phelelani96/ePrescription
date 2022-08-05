@@ -7,8 +7,13 @@
 @inject ISnackbar _snackbar
 
 <h3>Practice List</h3>
-
-<MudTable Items="@practices" Hover="true" >
+@if(practices == null)
+{
+    <p>Loading . . .</p>
+}
+else
+{
+    <MudTable Items="@practices" Hover="true" >
     <ToolBarContent>
        <MudButton Variant = "Variant.Filled" Color="Color.Info" Href="/practice/new">Add Practice</MudButton>
         <MudSpacer />
@@ -31,12 +36,15 @@
         <MudTd DataLabel="AddressLine2">@context.AddressLine2</MudTd>
         <MudTd DataLabel="SuburbId">@context.SuburbID</MudTd>
         <MudTd>
-            <a class="btn btn-primary btn-sm" href="/practice/edit/@context.Id">Update</a>
-            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))">Delete</MudButton>
+            
+            <a class="btn btn-primary btn-sm" href="/practice/edit/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>
         </MudTd>
          
     </RowTemplate>
 </MudTable>
+}
+
 
 @code {
     private string? searchString1;
