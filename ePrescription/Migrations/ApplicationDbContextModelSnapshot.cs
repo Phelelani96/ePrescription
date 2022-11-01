@@ -3,19 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ePrescription.Data;
 
 #nullable disable
 
-namespace ePrescription.Data.Migrations
+namespace ePrescription.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220705121238_MoreModels")]
-    partial class MoreModels
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,6 +82,9 @@ namespace ePrescription.Data.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PharmacyId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -122,6 +123,8 @@ namespace ePrescription.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PharmacyId");
+
                     b.HasIndex("PracticeId");
 
                     b.HasIndex("QualificationId");
@@ -129,6 +132,31 @@ namespace ePrescription.Data.Migrations
                     b.HasIndex("SuburbID");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "abc-123-ABC-246-aec",
+                            AccessFailedCount = 0,
+                            AddressLine1 = "14 8th Avenue",
+                            ConcurrencyStamp = "70a7c7f1-edef-4acb-b827-fe24cf93cd82",
+                            Discriminator = "Admin",
+                            Email = "tonystark@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Tony",
+                            IDNumber = "8611262654879",
+                            LastName = "Stark",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "TONYSTARK@GMAIL.COM",
+                            NormalizedUserName = "TONYSTARK@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDGxZrsdA4sMEjlGpRNQ+D13H8kmMFI5SL02kO/LB6xI/GJ4DqkD/uiDo2LItdbJaA==",
+                            PhoneNumber = "0780509071",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "35097686-6740-44b4-97cf-6b7f20cdefcc",
+                            SuburbID = 1,
+                            TwoFactorEnabled = false,
+                            UserName = "tonystark@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.City", b =>
@@ -151,6 +179,74 @@ namespace ePrescription.Data.Migrations
                     b.HasIndex("ProvinceId");
 
                     b.ToTable("City");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Gqeberha",
+                            ProvinceId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Johannesburg",
+                            ProvinceId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Bhisho",
+                            ProvinceId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Polokwane",
+                            ProvinceId = 6
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Bloemfontein",
+                            ProvinceId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Mbombela",
+                            ProvinceId = 7
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Mahikeng",
+                            ProvinceId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Kimberley",
+                            ProvinceId = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Cape Town",
+                            ProvinceId = 1
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Pietermarizburg",
+                            ProvinceId = 9
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Durban",
+                            ProvinceId = 9
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.Contra_Indication", b =>
@@ -200,6 +296,50 @@ namespace ePrescription.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Diagnosis");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Attention Deficit Disorder",
+                            ICD10_Code = "F90.9"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Hyperthyroidism",
+                            ICD10_Code = "E05.9"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Migraine",
+                            ICD10_Code = "G43.909"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Back Pain",
+                            ICD10_Code = "M54.9"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Hypertension",
+                            ICD10_Code = "I10.9"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Asthma ",
+                            ICD10_Code = "J45.909"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "High Cholesterol",
+                            ICD10_Code = "E78.5"
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.Dosage_Form", b =>
@@ -217,6 +357,58 @@ namespace ePrescription.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Dosage_Form");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Tablet"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Capsule"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Suspension"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Syrup"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Lotion"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Spray"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Gel"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Suppository"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Description = "Injection"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Description = "Drops"
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.History_Medication", b =>
@@ -257,6 +449,93 @@ namespace ePrescription.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Ingredients");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Methylphenidate HCI "
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Ergotamine tartare"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Cyclizine HCI"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Caffeine Hydrate"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Paracetamol"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Codeine Phosphate"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Description = "Caffeine"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Description = "Doxylamine Succinate"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Description = "Aspirin"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Description = "Ibuprofen"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Description = "Phenazone"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Description = "Benzocaine"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Description = "Glycerine"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Description = "Carbimazole"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Description = "Metoprolol Tartrate "
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Description = "Doxazosin"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Description = "Atorvastatin"
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.Med_Ingredients", b =>
@@ -277,8 +556,9 @@ namespace ePrescription.Data.Migrations
                     b.Property<int>("MedicineId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Strength")
-                        .HasColumnType("int");
+                    b.Property<string>("Strength")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -335,20 +615,18 @@ namespace ePrescription.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("DosageFormId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Dosage_FormId")
                         .HasColumnType("int");
+
+                    b.Property<string>("MedSizeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ScheduleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ScheduledId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -358,6 +636,23 @@ namespace ePrescription.Data.Migrations
                     b.HasIndex("ScheduleId");
 
                     b.ToTable("Medicine");
+                });
+
+            modelBuilder.Entity("ePrescription.Data.MedSize", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Size");
                 });
 
             modelBuilder.Entity("ePrescription.Data.Patient_Allergy", b =>
@@ -371,7 +666,7 @@ namespace ePrescription.Data.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("IngredientsId")
+                    b.Property<int?>("IngredientsId")
                         .HasColumnType("int");
 
                     b.Property<string>("PatientId")
@@ -419,16 +714,12 @@ namespace ePrescription.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PharmacistId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SuburbID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PharmacistId")
-                        .IsUnique();
 
                     b.HasIndex("SuburbID");
 
@@ -452,7 +743,8 @@ namespace ePrescription.Data.Migrations
 
                     b.Property<string>("ContactNo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -464,7 +756,8 @@ namespace ePrescription.Data.Migrations
 
                     b.Property<string>("PracticeNo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.Property<int>("SuburbID")
                         .HasColumnType("int");
@@ -566,6 +859,53 @@ namespace ePrescription.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Province");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Western Cape"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "North West"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Eastern Cape"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Gauteng"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Free State"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Limpopo"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Mpumalanga"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Northern Cape"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "KwaZulu-Natal"
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.Qualification", b =>
@@ -583,6 +923,18 @@ namespace ePrescription.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Qualification");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Degree"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Masters"
+                        });
                 });
 
             modelBuilder.Entity("ePrescription.Data.Schedule", b =>
@@ -643,6 +995,162 @@ namespace ePrescription.Data.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("Suburb");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CityId = 7,
+                            Name = "Kamagugu",
+                            PostalCode = "1200"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CityId = 11,
+                            Name = "Essenwood",
+                            PostalCode = "4001"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CityId = 1,
+                            Name = "Bridgemead",
+                            PostalCode = "6025"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CityId = 11,
+                            Name = "Kenville",
+                            PostalCode = "4051"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CityId = 1,
+                            Name = "Humewood",
+                            PostalCode = "6001"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CityId = 11,
+                            Name = "Cato Manor",
+                            PostalCode = "4091"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CityId = 1,
+                            Name = "Algoa Park",
+                            PostalCode = "6001"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CityId = 11,
+                            Name = "Musgrave",
+                            PostalCode = "4001"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CityId = 6,
+                            Name = "Barberton",
+                            PostalCode = "1300"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CityId = 11,
+                            Name = "Bluff",
+                            PostalCode = "4052"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CityId = 1,
+                            Name = "Cotswold",
+                            PostalCode = "6045"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CityId = 11,
+                            Name = "Glenmore",
+                            PostalCode = "4001"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CityId = 6,
+                            Name = "Riverside",
+                            PostalCode = "1226"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CityId = 1,
+                            Name = "Lorraine",
+                            PostalCode = "6070"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CityId = 11,
+                            Name = "Kwamashu",
+                            PostalCode = "4359"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CityId = 11,
+                            Name = "Inanda",
+                            PostalCode = "4309"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CityId = 1,
+                            Name = "Struandale",
+                            PostalCode = "6001"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CityId = 6,
+                            Name = "Valencia Park",
+                            PostalCode = "1201"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CityId = 11,
+                            Name = "Tongaat",
+                            PostalCode = "4399"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CityId = 11,
+                            Name = "Greyville",
+                            PostalCode = "4001"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CityId = 1,
+                            Name = "Malabar",
+                            PostalCode = "6020"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CityId = 1,
+                            Name = "Summerstrand",
+                            PostalCode = "6001"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -670,6 +1178,36 @@ namespace ePrescription.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            ConcurrencyStamp = "8b490c10-7502-44fb-b6df-c772cc59863a",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            ConcurrencyStamp = "ddebf2cb-3ec3-430c-8b30-c7346500f31b",
+                            Name = "Doctor",
+                            NormalizedName = "DOCTOR"
+                        },
+                        new
+                        {
+                            Id = "3",
+                            ConcurrencyStamp = "fb48519f-1f29-4f51-adcd-1ca0c59f0148",
+                            Name = "Pharmacist",
+                            NormalizedName = "PHARMACIST"
+                        },
+                        new
+                        {
+                            Id = "4",
+                            ConcurrencyStamp = "38c3cada-c706-46d4-adf7-b52e536ca28d",
+                            Name = "Patient",
+                            NormalizedName = "PATIENT"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -759,6 +1297,18 @@ namespace ePrescription.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "abc-123-ABC-246-aec",
+                            RoleId = "1"
+                        },
+                        new
+                        {
+                            UserId = "abc-123-ABC-246-eee",
+                            RoleId = "2"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -784,6 +1334,10 @@ namespace ePrescription.Data.Migrations
 
             modelBuilder.Entity("ePrescription.Areas.Identity.Data.User", b =>
                 {
+                    b.HasOne("ePrescription.Data.Pharmacy", "Pharmacy")
+                        .WithMany("users")
+                        .HasForeignKey("PharmacyId");
+
                     b.HasOne("ePrescription.Data.Practice", "Practice")
                         .WithMany()
                         .HasForeignKey("PracticeId");
@@ -792,15 +1346,19 @@ namespace ePrescription.Data.Migrations
                         .WithMany("Doctors")
                         .HasForeignKey("QualificationId");
 
-                    b.HasOne("ePrescription.Data.Suburb", null)
+                    b.HasOne("ePrescription.Data.Suburb", "Suburb")
                         .WithMany("Users")
                         .HasForeignKey("SuburbID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Pharmacy");
+
                     b.Navigation("Practice");
 
                     b.Navigation("Qualification");
+
+                    b.Navigation("Suburb");
                 });
 
             modelBuilder.Entity("ePrescription.Data.City", b =>
@@ -929,9 +1487,7 @@ namespace ePrescription.Data.Migrations
                 {
                     b.HasOne("ePrescription.Data.Ingredients", "Ingredients")
                         .WithMany()
-                        .HasForeignKey("IngredientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IngredientsId");
 
                     b.HasOne("ePrescription.Areas.Identity.Data.User", "Patient")
                         .WithMany("Allergies")
@@ -946,28 +1502,24 @@ namespace ePrescription.Data.Migrations
 
             modelBuilder.Entity("ePrescription.Data.Pharmacy", b =>
                 {
-                    b.HasOne("ePrescription.Areas.Identity.Data.User", "Pharmacist")
-                        .WithOne("Pharmacy")
-                        .HasForeignKey("ePrescription.Data.Pharmacy", "PharmacistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ePrescription.Data.Suburb", null)
+                    b.HasOne("ePrescription.Data.Suburb", "Suburb")
                         .WithMany("Pharmacies")
                         .HasForeignKey("SuburbID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Pharmacist");
+                    b.Navigation("Suburb");
                 });
 
             modelBuilder.Entity("ePrescription.Data.Practice", b =>
                 {
-                    b.HasOne("ePrescription.Data.Suburb", null)
+                    b.HasOne("ePrescription.Data.Suburb", "Suburb")
                         .WithMany("Practices")
                         .HasForeignKey("SuburbID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Suburb");
                 });
 
             modelBuilder.Entity("ePrescription.Data.Prescription", b =>
@@ -1083,8 +1635,6 @@ namespace ePrescription.Data.Migrations
                     b.Navigation("Allergies");
 
                     b.Navigation("Medical_History");
-
-                    b.Navigation("Pharmacy");
                 });
 
             modelBuilder.Entity("ePrescription.Data.City", b =>
@@ -1117,6 +1667,11 @@ namespace ePrescription.Data.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Med_Ingredients");
+                });
+
+            modelBuilder.Entity("ePrescription.Data.Pharmacy", b =>
+                {
+                    b.Navigation("users");
                 });
 
             modelBuilder.Entity("ePrescription.Data.Province", b =>

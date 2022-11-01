@@ -31,13 +31,13 @@ namespace ePrescription.Data
         [Required]
         public int SuburbID { get; set; }
 
-        //[Display(Name = "Pharmacist")]
-        //public string? PharmacistId { get; set; } = string.Empty;
+        [Display(Name = "Pharmacist")]
+        public string? PharmacistId { get; set; } = string.Empty;
 
         //Navigation Properties
-        public User? Pharmacist { get; set; }
-
-        public Suburb Suburb { get; set; }
+        //public User? Pharmacist { get; set; }
+        public ICollection<User>? users { get; set; }
+        public Suburb? Suburb { get; set; }
 
     }
 }

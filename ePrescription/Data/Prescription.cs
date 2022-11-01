@@ -13,8 +13,8 @@ namespace ePrescription.Data
         public string PatientId { get; set; } = string.Empty;
         public string DoctorId { get; set; } = string.Empty;
 
-        public User Patient { get; set; }
-        public User Doctor { get; set; }
+        public User? Patient { get; set; }
+        public User? Doctor { get; set; }
         //public ICollection<Prescription_Details> Prescription_Details {get; set; }
     }  
 }

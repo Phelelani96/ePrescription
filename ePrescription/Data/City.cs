@@ -8,7 +8,7 @@
         public int ProvinceId { get; set; }
 
         //Navigation Properties
-        public ICollection<Suburb> Suburbs { get; set; }   
-        public Province Province { get; set; }
+        public ICollection<Suburb>? Suburbs { get; set; }   
+        public Province? Province { get; set; }
     }
 }

@@ -8,9 +8,9 @@
         public int SeverityId { get; set; }
 
         //Navigation Properties
-        public Diagnosis Diagnosis { get; set; }
-        public Ingredients Ingredient { get; set; }
-        public Severity Severity { get; set; }
+        public Diagnosis? Diagnosis { get; set; }
+        public Ingredients? Ingredient { get; set; }
+        public Severity? Severity { get; set; }
 
     }
 }

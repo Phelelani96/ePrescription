@@ -9,8 +9,8 @@ namespace ePrescription.Data
 
         public int IngredientId { get; set; }
 
-        public User Patient { get; set; }
+        public User? Patient { get; set; }
 
-        public Ingredients Ingredients { set; get; }
+        public Ingredients? Ingredients { set; get; }
     }
 }
