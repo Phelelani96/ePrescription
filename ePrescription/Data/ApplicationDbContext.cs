@@ -52,51 +52,7 @@ namespace ePrescription.Data
                     PhoneNumberConfirmed = true,
                     PasswordHash = new PasswordHasher<User>().HashPassword(null, "Tony123!")
 
-                },
-
-                new User
-                {
-                    Id = "abc-123-ABC-246-eee",
-                    FirstName = "Doctor",
-                    LastName = "Strange",
-                    IDNumber = "8611223659874",
-                    Email = "strange@gmail.com",
-                    NormalizedEmail = "STRANGE@GMAIL.COM",
-                    PhoneNumber = "0780509025",
-                    UserName = "strange@gmail.com",
-                    NormalizedUserName = "STRANGE@GMAIL.COM",
-                    Discriminator = "Doctor",
-                    AddressLine1 = "1 2th Avenue",
-                    SuburbID = 1,
-                    PracticeId = 3,
-                    QualificationId = 1,
-                    RegistrationNo = "123456789",
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = true,
-                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "Strange123!")
-
-                },
-                new User
-                {
-                    Id = "abc-123-ABC-246-ccc",
-                    FirstName = "Peter",
-                    LastName = "Parker",
-                    IDNumber = "9911262654123",
-                    Email = "parker@gmail.com",
-                    NormalizedEmail = "PARKER@GMAIL.COM",
-                    PhoneNumber = "0780509071",
-                    UserName = "parker@gmail.com",
-                    NormalizedUserName = "PARKER@GMAIL.COM",
-                    Discriminator = "Pharmacist",
-                    AddressLine1 = "8th Avenue",
-                    SuburbID = 3,
-                    PharmacyId = 2,
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = true,
-                    PasswordHash = new PasswordHasher<User>().HashPassword(null, "Peter123!")
-
-                }
-                );
+                });
 
             builder.Entity<Dosage_Form>().HasData(
                  new Dosage_Form
@@ -238,31 +194,7 @@ namespace ePrescription.Data
                     Description = "Atorvastatin"
                 });
 
-            builder.Entity<Practice>().HasData(
-                new Practice
-                {
-                    Id = 1,
-                    Name = "Practice",
-                    Email = "info@practice.com",
-                    ContactNo = "0456987456",
-                    AddressLine1 = "1 Practice Street",
-                    SuburbID = 1,
-                    PracticeNo = "12365477"
-                });
-
-            builder.Entity<Pharmacy>().HasData(
-                new Pharmacy
-                {
-                    Id = 1,
-                    Name = "Pharmacy",
-                    Email = "info@pharmacy.com",
-                    ContactNo = "0475557456",
-                    AddressLine1 = "1 Pharmacy Street",
-                    SuburbID = 1,
-                    LicenceNo = "12365477",
-
-                });
-
+            
             builder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string>
                 {
@@ -273,12 +205,13 @@ namespace ePrescription.Data
                  {
                      RoleId = "2",
                      UserId = "abc-123-ABC-246-eee"
-                 },
-                  new IdentityUserRole<string>
-                  {
-                      RoleId = "3",
-                      UserId = "abc-123-ABC-246-ccc"
-                  });
+                 }
+                  //new IdentityUserRole<string>
+                  //{
+                  //    RoleId = "3",
+                  //    UserId = "abc-123-ABC-246-ccc"
+                  //}
+                  );
 
             builder.Entity<IdentityRole>().HasData(
                 new IdentityRole

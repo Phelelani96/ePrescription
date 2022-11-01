@@ -12,9 +12,9 @@ namespace ePrescription.Data
 
         //Navigation Properties
         public City City { get; set; }
-        public ICollection<Pharmacy> Pharmacies { get; set; }
-        public ICollection<Practice> Practices { get; set; }
-        public ICollection<User> Users { get; set; }
+        public ICollection<Pharmacy>? Pharmacies { get; set; }
+        public ICollection<Practice>? Practices { get; set; }
+        public ICollection<User>? Users { get; set; }
 
     }
 }

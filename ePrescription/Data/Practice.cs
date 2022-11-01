@@ -33,6 +33,6 @@ namespace ePrescription.Data
         [Required]
         public int SuburbID { get; set; }
 
-        public Suburb Suburb { get; set; }
+        public Suburb? Suburb { get; set; }
     }
 }

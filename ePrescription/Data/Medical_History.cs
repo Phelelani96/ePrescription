@@ -18,10 +18,10 @@ namespace ePrescription.Data
 
         
         // Nav properties
-        public User Patient { get; set; }
+        public User? Patient { get; set; }
 
-        public Diagnosis Diagnosis { get; set; }
+        public Diagnosis? Diagnosis { get; set; }
 
-        public ICollection<Medical_History> History { get; set; }
+        public ICollection<Medical_History>? History { get; set; }
     }
 }

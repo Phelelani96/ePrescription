@@ -53,7 +53,7 @@ public class User : IdentityUser
     [Required]
     public int SuburbID { get; set; }
 
-    public Suburb Suburb { get; set; }
+    public Suburb? Suburb { get; set; }
 
     //Pharmacist Properties//
     public int? PharmacyId { get; set; }

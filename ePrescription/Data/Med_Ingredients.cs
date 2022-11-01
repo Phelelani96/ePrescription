@@ -6,9 +6,9 @@
         public string Description { get; set; } = string.Empty;
         public int IngredientId { get; set; }
         public int MedicineId { get; set; }
-        public int Strength { get; set; }
+        public string Strength { get; set; }
 
-        public Ingredients Ingredient { get; set; }
-        public Medicine Medicine { get; set; }
+        public Ingredients? Ingredient { get; set; }
+        public Medicine? Medicine { get; set; }
     }
 }

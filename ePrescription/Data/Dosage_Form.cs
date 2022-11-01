@@ -6,6 +6,6 @@
         public string Description { get; set; } = string.Empty;
 
         //Navigation Properties
-        public ICollection<Medicine> Medicines { get; set; }
+        public ICollection<Medicine>? Medicines { get; set; }
     }
 }

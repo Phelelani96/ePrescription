@@ -7,7 +7,7 @@
         public int MedicineId { get; set; }
 
         //Navigation Properties
-        public Medical_History Medical_History { get; set; }
-        public Medicine Medicine { get; set; }
+        public Medical_History? Medical_History { get; set; }
+        public Medicine? Medicine { get; set; }
     }
 }

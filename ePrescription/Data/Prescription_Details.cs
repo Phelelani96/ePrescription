@@ -16,8 +16,8 @@ namespace ePrescription.Data
 
 
         //Navigation Properties
-        public User Pharmacist { get; set; }
-        public Medicine Medicine { get; set; }
-        public Prescription Prescription { get; set; }
+        public User? Pharmacist { get; set; }
+        public Medicine? Medicine { get; set; }
+        public Prescription? Prescription { get; set; }
     }
 }
