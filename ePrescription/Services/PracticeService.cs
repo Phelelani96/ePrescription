@@ -44,7 +44,7 @@ namespace ePrescription.Services
             }
             catch
             {
-                response.Message = "Practice does not exist";
+                response.Message = "An error occured while retrieving the data. If this persists, please contact the system administrator";
                 response.Success = false;
                 return response;
             }
