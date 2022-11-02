@@ -1,0 +1,104 @@
+﻿@page "/doctors/create"
+@using MudBlazor
+@using ePrescription.Controllers
+@using ePrescription.Areas.Identity.Data
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _nav
+@inject DoctorsController _p
+
+<h3>Ass Doctor</h3>
+<EditForm Model="@doctor" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First Name"
+                                  @bind-Value="doctor.FirstName" For="@(() => doctor.FirstName)" />
+                    <MudTextField Label="Last Name"
+                                  @bind-Value="doctor.LastName" For="@(() => doctor.LastName)" />
+                    <MudTextField Label="Email"
+                                  @bind-Value="doctor.Email" For="@(() => doctor.Email)" />
+                    <MudTextField Label="Contact Number"
+                                  @bind-Value="doctor.PhoneNumber" For="@(() => doctor.PhoneNumber)" />
+                    <MudTextField Label="Registration Number"
+                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" />
+                    <MudTextField Label="Address Line 1"
+                                  @bind-Value="doctor.AddressLine1" For="@(() => doctor.AddressLine1)" />
+                    <MudTextField Label="Address Line 2"
+                                  @bind-Value="doctor.AddressLine2" For="@(() => doctor.AddressLine2)" />
+                    <MudSelect T="int" Label="Select Suburb" @bind-Value="@doctor.SuburbID" Placeholder="Please Select Qualification">
+                        @if (Suburbs == null)
+                        {
+
+                        }
+                        else
+                        {
+                            @foreach (var s in Suburbs)
+                            {
+                                <MudSelectItem T="int" Value="s.Id">@s.Name</MudSelectItem>
+                              
+                            }
+                        }
+                    </MudSelect>
+                    <MudSelect T="int?" Label="Select Qualification" @bind-Value="@doctor.QualificationId" Placeholder="Please Select Qualification">
+                        @if (Suburbs == null)
+                        {
+
+                        }
+                        else
+                        {
+                            @foreach (var q in Qualifications)
+                            {
+                                <MudSelectItem T="int?" Value="q.Id">
+                                    @q.Description
+                                </MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+
+@code {
+    private User doctor = new User();
+    private List<Suburb> Suburbs { get; set; }
+    private List<Qualification> Qualifications { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Suburbs = await _p.GetSuburbsAsync();
+        Qualifications = await _p.GetQualificationsAsync();
+    }
+
+    //private async Task GetSuburbs()
+    //{
+    //    Suburbs = await _p.GetSuburbsAsync();
+    //}
+    //private async Task GetQualifications()
+    //{
+    //    Qualifications = await _p.GetQualificationsAsync();
+    //}
+
+    private async Task Save()
+    {
+        var result = await _p.Create(doctor);
+
+        if (result.Data == true)
+        {
+            _snackbar.Add("Doctor added successfully!.", Severity.Success);
+            _nav.NavigateTo("/doctors");
+        }
+        else
+        {
+            _snackbar.Add("Failed to add Doctor, Please try again.", Severity.Warning);
+        }
+    }
+}

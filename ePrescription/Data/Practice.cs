@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ePrescription.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace ePrescription.Data
 {
@@ -34,5 +35,6 @@ namespace ePrescription.Data
         public int SuburbID { get; set; }
 
         public Suburb? Suburb { get; set; }
+        public User? Doctor { get; set; }
     }
 }
