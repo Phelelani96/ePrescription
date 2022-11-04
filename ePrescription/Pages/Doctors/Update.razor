@@ -1,7 +1,168 @@
 ﻿@page "/doctors/update/{id}"
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using ePrescription.Controllers
+@using ePrescription.Areas.Identity.Data
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _nav
+@inject DoctorsController _p
+
 <h3>Update Doctor</h3>
+@if (doctor == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@doctor" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <MudGrid>
+            <MudItem xs="12" sm="12">
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField Label="First Name"
+                                  @bind-Value="doctor.Id" hidden />
+                        <MudTextField Label="First Name"
+                                  @bind-Value="doctor.FirstName" For="@(() => doctor.FirstName)" />
+                        <MudTextField Label="Last Name"
+                                  @bind-Value="doctor.LastName" For="@(() => doctor.LastName)" />
+                        <MudTextField Label="Email"
+                                  @bind-Value="doctor.Email" For="@(() => doctor.Email)" />
+                        <MudTextField Label="Contact Number"
+                                  @bind-Value="doctor.PhoneNumber" For="@(() => doctor.PhoneNumber)" />
+                        <MudTextField Label="Registration Number"
+                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" required />
+                        <MudSelect T="int?" Label="Select Practice" @bind-Value="@doctor.PracticeId" Placeholder="Please Select Practice" For="@(() => doctor.PracticeId)">
+                            @if (Practices == null)
+                            {
+
+                            }
+                            else
+                            {
+                                @foreach (var s in Practices)
+                                {
+                                    <MudSelectItem T="int?" Value="s.Id">@s.Name</MudSelectItem>
+
+                                }
+                            }
+                        </MudSelect>
+                        <MudSelect T="int?" Label="Select Qualification" @bind-Value="@doctor.QualificationId" For="@(() => doctor.QualificationId)">
+                            @if (Qualifications == null)
+                            {
+
+                            }
+                            else
+                            {
+                                @foreach (var q in Qualifications)
+                                {
+                                    <MudSelectItem T="int?" Value="q.Id">
+                                        @q.Description
+                                    </MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+}
+
 
 @code {
     [Parameter]
     public string? id { get; set; }
+
+    private InputModel? doctor;
+    private User? user { get; set; }
+    private List<Data.Practice> Practices { get; set; }
+    private List<Qualification> Qualifications { get; set; }
+    ServiceResponse<User> doc = new ServiceResponse<User>();
+    ServiceResponse<bool> result = new ServiceResponse<bool>();
+    protected override async Task OnInitializedAsync()
+    {
+        Practices = await _p.GetPracticesAsync();
+        Qualifications = await _p.GetQualificationsAsync();
+        if(id != null)
+            doc = await _p.Details(id);
+        if(doc.Data != null)
+        {
+            //doctor = doc.Data;
+            doctor.Id = doc.Data.Id;
+            doctor.FirstName = doc.Data.FirstName;
+            doctor.LastName = doc.Data.LastName;
+            doctor.Email = doc.Data.Email;
+            doctor.PhoneNumber = doc.Data.PhoneNumber;
+            doctor.QualificationId = doc.Data.QualificationId;
+            doctor.PracticeId = doc.Data.PracticeId;
+            doctor.RegistrationNo = doc.Data.RegistrationNo;
+        }
+
+
+    }
+
+    //private async Task GetSuburbs()
+    //{
+    //    Suburbs = await _p.GetSuburbsAsync();
+    //}
+    //private async Task GetQualifications()
+    //{
+    //    Qualifications = await _p.GetQualificationsAsync();
+    //}
+
+    private async Task Save()
+    {
+        user.Id = doctor.Id;
+        user.FirstName = doctor.FirstName;
+        user.LastName = doctor.LastName;
+        user.Email = doctor.Email;
+        user.PhoneNumber = doctor.PhoneNumber;
+        user.QualificationId = doctor.QualificationId;
+        user.PracticeId = doctor.PracticeId;
+        user.RegistrationNo = doctor.RegistrationNo;
+        result = await _p.Edit(id,user);
+        
+
+        if (result.Data == true)
+        {
+            _snackbar.Add("Doctor updated successfully!.", Severity.Success);
+            _nav.NavigateTo("/doctors");
+        }
+        else
+        {
+            _snackbar.Add("Failed to update Doctor, Please try again.", Severity.Warning);
+        }
+    }
+
+    private class InputModel
+    {
+        public string Id { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        public int? QualificationId { get; set; }
+
+        [Required]
+        public string? RegistrationNo { get; set; }
+
+        [Required]
+        public int? PracticeId { get; set; }
+
+    }
 }

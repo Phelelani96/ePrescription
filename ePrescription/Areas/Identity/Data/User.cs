@@ -11,6 +11,22 @@ namespace ePrescription.Areas.Identity.Data;
 // Add profile data for application users by adding properties to the User class
 public class User : IdentityUser
 {
+    public User()
+    {
+
+    }
+    public User(string firstName, string lastName, string discriminator,string email,string phoneNumber, int? practiceId, int? qualificationId, string? registrationNo)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Discriminator = discriminator;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        PracticeId = practiceId;
+        QualificationId = qualificationId;
+        RegistrationNo = registrationNo;
+    }
+
     [Required]
     [Display(Name = "First Name")]
     public string FirstName { get; set; } = string.Empty;
@@ -27,16 +43,25 @@ public class User : IdentityUser
         }
     }
 
-    [Required]
+    //[Required]
     [Display(Name = "ID Number")]
     [MaxLength(13)]
-    public string IDNumber { get; set; } = string.Empty;
+    public string? IDNumber { get; set; } = string.Empty;
 
-    public string DOB
+    public string? DOB
     {
         get
         {
-            return IDNumber.Substring(0, 6);
+            if (IDNumber == null || IDNumber == "")
+            {
+                return null;
+            }
+            else
+            {
+                return IDNumber.Substring(0, 6);
+            }
+            
+                
         }
     }
 
@@ -50,8 +75,11 @@ public class User : IdentityUser
     [Display(Name = "Address Line 2")]
     public string? AddressLine2 { get; set; }
 
+    //[Required]
+    public int? SuburbID { get; set; }
+
     [Required]
-    public int SuburbID { get; set; }
+    public string Status { get; set; }
 
     public Suburb? Suburb { get; set; }
 

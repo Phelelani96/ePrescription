@@ -48,6 +48,7 @@ namespace ePrescription.Data
                     Discriminator = "Admin",
                     AddressLine1 = "14 8th Avenue",
                     SuburbID = 1,
+                    Status = "Active",
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true,
                     PasswordHash = new PasswordHasher<User>().HashPassword(null, "Tony123!")
