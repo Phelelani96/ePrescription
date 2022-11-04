@@ -1,6 +1,120 @@
 ﻿@page "/pharmacists/create"
-<h3>Create Pharmasist</h3>
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using ePrescription.Controllers
+@using ePrescription.Areas.Identity.Data
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _nav
+@inject PharmacistsController _p
+
+<h3>Add Pharmacist</h3>
+<EditForm Model="@pharmacist" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="First Name"
+                                  @bind-Value="pharmacist.FirstName" For="@(() => pharmacist.FirstName)" />
+                    <MudTextField Label="Last Name"
+                                  @bind-Value="pharmacist.LastName" For="@(() => pharmacist.LastName)" />
+                    <MudTextField Label="Email"
+                                  @bind-Value="pharmacist.Email" For="@(() => pharmacist.Email)" />
+                    <MudTextField Label="Contact Number"
+                                  @bind-Value="pharmacist.PhoneNumber" For="@(() => pharmacist.PhoneNumber)" />
+                    <MudTextField Label="Registration Number"
+                                  @bind-Value="pharmacist.RegistrationNo" For="@(() => pharmacist.RegistrationNo)"/>
+                    <MudSelect T="int" Label="Select Pharmacist" @bind-Value="@pharmacist.PharmacyId" Placeholder="Please Select Pharmacist" For="@(() => pharmacist.PharmacyId)">
+                        @if (Pharmacies == null)
+                        {
+
+                        }
+                        else
+                        {
+                            @foreach (var s in Pharmacies)
+                            {
+                                <MudSelectItem T="int" Value="s.Id">@s.Name</MudSelectItem>
+                              
+                            }
+                        }
+                    </MudSelect>
+                
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
 
 @code {
+    //private User user = new User();
+    private InputModel pharmacist = new InputModel();
+    private List<Data.Pharmacy> Pharmacies { get; set; }
+    //private List<Qualification> Qualifications { get; set; }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        Pharmacies = await _p.GetPharmaciesAsync();
+        
+    }
+
+    //private async Task GetSuburbs()
+    //{
+    //    Suburbs = await _p.GetSuburbsAsync();
+    //}
+    //private async Task GetQualifications()
+    //{
+    //    Qualifications = await _p.GetQualificationsAsync();
+    //}
+
+    private async Task Save()
+    {
+         User user = new User(pharmacist.FirstName, pharmacist.LastName, "Pharmacist", pharmacist.Email, pharmacist.PhoneNumber, pharmacist.PharmacyId, pharmacist.RegistrationNo);
+           var result = await _p.Create(user);
+
+        if (result.Data == true)
+        {
+            _snackbar.Add("Doctor added successfully!.", Severity.Success);
+            _nav.NavigateTo("/doctors");
+        }
+        else
+        {
+            _snackbar.Add(result.Message, Severity.Warning);
+        }
+    }
+
+    private class InputModel
+    {
+            [Required]
+            public string FirstName { get; set; }
+
+            [Required]
+            public string LastName { get; set; }
+
+
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+
+            [Required]
+            public string PhoneNumber { get; set; }
+
+            [Required]
+            public int QualificationId { get; set; }
+
+            [Required]
+            public string RegistrationNo { get; set; }
+
+            [Required]
+            public int PharmacyId { get; set; }
+
+
+
+
+    }
 }

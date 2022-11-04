@@ -21,7 +21,7 @@ else
             <MudItem xs="12" sm="12">
                 <MudCard>
                     <MudCardContent>
-                        <MudTextField Label="First Name"
+                        <MudTextField
                                   @bind-Value="doctor.Id" hidden />
                         <MudTextField Label="First Name"
                                   @bind-Value="doctor.FirstName" For="@(() => doctor.FirstName)" />
@@ -32,7 +32,7 @@ else
                         <MudTextField Label="Contact Number"
                                   @bind-Value="doctor.PhoneNumber" For="@(() => doctor.PhoneNumber)" />
                         <MudTextField Label="Registration Number"
-                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" required />
+                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" />
                         <MudSelect T="int?" Label="Select Practice" @bind-Value="@doctor.PracticeId" Placeholder="Please Select Practice" For="@(() => doctor.PracticeId)">
                             @if (Practices == null)
                             {
@@ -77,8 +77,8 @@ else
     [Parameter]
     public string? id { get; set; }
 
-    private InputModel? doctor;
-    private User? user { get; set; }
+    private InputModel doctor { get; set; } = new InputModel();
+    private User? user { get; set; } = new User();
     private List<Data.Practice> Practices { get; set; }
     private List<Qualification> Qualifications { get; set; }
     ServiceResponse<User> doc = new ServiceResponse<User>();

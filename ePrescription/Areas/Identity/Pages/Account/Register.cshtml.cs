@@ -181,6 +181,8 @@ namespace ePrescription.Areas.Identity.Pages.Account
                 user.AddressLine1 = Input.AddressLine1;
                 user.AddressLine2 = Input.AddressLine2;
                 user.SuburbID = Input.SuburbID;
+                user.Status = "Active";
+                user.Discriminator = "Patient";
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
