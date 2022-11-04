@@ -26,7 +26,9 @@ namespace ePrescription.Controllers
             var response = new ServiceResponse<List<User>>();
             try
             {
-                response.Data = await _context.Users.Where(u => u.Discriminator == "Doctor").ToListAsync();
+                response.Data = await _context.Users
+                    .Include(d => d.Practice)
+                    .Include(d => d.Qualification).Where(u => u.Discriminator == "Doctor").ToListAsync();
                 return response;
             }
             catch
@@ -84,11 +86,12 @@ namespace ePrescription.Controllers
                 doctor.IDNumber = user.IDNumber;
                 doctor.AddressLine1 = user.AddressLine1;
                 doctor.AddressLine2 = user.AddressLine2;
-                doctor.SuburbID = user.SuburbID;
+                //doctor.SuburbID = user.SuburbID;
                 doctor.QualificationId = user.QualificationId;
                 doctor.RegistrationNo = user.RegistrationNo;
                 doctor.PracticeId = user.PracticeId;
-                doctor.Discriminator = "Doctor";
+                doctor.Discriminator = user.Discriminator;
+                doctor.Status = "Active";
                 doctor.PhoneNumber = user.PhoneNumber;
                 doctor.EmailConfirmed = true;
 
@@ -125,8 +128,8 @@ namespace ePrescription.Controllers
         }
         public async Task<List<Practice>> GetPracticesAsync()
         {
-            var result =  _context.Practice.Where(p => p.Doctor == null);
-            return await result.ToListAsync();
+            //var result =  _context.Practice;
+            return await _context.Practice.ToListAsync();
         }
 
 
@@ -140,16 +143,46 @@ namespace ePrescription.Controllers
         // POST: DoctorsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ServiceResponse<bool>> Edit(string id, User user)
         {
+            var response = new ServiceResponse<bool>();
+            //User doctor = new User();
             try
             {
-                return RedirectToAction(nameof(Index));
+                
+                //if (id != null)
+                var doc = await _context.Users.FirstOrDefaultAsync(d => d.Id == id);
+                if(doc != null)
+                {
+                    doc.FirstName = user.FirstName;
+                    doc.LastName = user.LastName;
+                    doc.Email = user.Email;
+                    doc.QualificationId = user.QualificationId;
+                    doc.RegistrationNo = user.RegistrationNo;
+                    doc.PracticeId = user.PracticeId;
+                    doc.PhoneNumber = user.PhoneNumber;
+                    _context.Update(doc);
+                    await _context.SaveChangesAsync();
+                    response.Data = true;
+                    response.Success = true;
+                    return response;
+
+                }
+                else
+                {
+                    response.Data = false;
+                    response.Message = "Doctor was not found!";
+                    return response;
+                }
+
             }
             catch
             {
-                return View();
+                response.Data = false;
+                response.Message = "Failed to update Doctor. If this persists, please contact your system administrator.";
+                return response;
             }
+       
         }
 
         // GET: DoctorsController/Delete/5
@@ -161,15 +194,37 @@ namespace ePrescription.Controllers
         // POST: DoctorsController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public async Task<ServiceResponse<bool>> Delete(string id)
         {
+            var response = new ServiceResponse<bool>();
             try
             {
-                return RedirectToAction(nameof(Index));
+                if(id == null)
+                {
+                    response.Success = false;
+                    response.Data = false;
+                    response.Message = "Doctor does not exist";
+                }
+                var doctor = await _context.Users.FindAsync(id);
+                if(doctor == null)
+                {
+                    response.Success = false;
+                    response.Data = false;
+                    response.Message = "Doctor does not exist";
+                }
+
+                doctor.Status = "Inactive";
+                _context.SaveChanges();
+                response.Data = true;
+                response.Message = "Sucessfully removed " + doctor.FullName;
+                return response;
             }
             catch
             {
-                return View();
+                response.Success = false;
+                response.Data = false;
+                response.Message = "An error occured. If this persists, please contact the system administrator";
+                return response;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿@page "/doctors/create"
 @using MudBlazor
+@using System.ComponentModel.DataAnnotations
 @using ePrescription.Controllers
 @using ePrescription.Areas.Identity.Data
 @inject IDialogService DialogService
@@ -7,7 +8,7 @@
 @inject NavigationManager _nav
 @inject DoctorsController _p
 
-<h3>Ass Doctor</h3>
+<h3>Add Doctor</h3>
 <EditForm Model="@doctor" OnValidSubmit="Save">
     <DataAnnotationsValidator />
     <MudGrid>
@@ -23,27 +24,23 @@
                     <MudTextField Label="Contact Number"
                                   @bind-Value="doctor.PhoneNumber" For="@(() => doctor.PhoneNumber)" />
                     <MudTextField Label="Registration Number"
-                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" />
-                    <MudTextField Label="Address Line 1"
-                                  @bind-Value="doctor.AddressLine1" For="@(() => doctor.AddressLine1)" />
-                    <MudTextField Label="Address Line 2"
-                                  @bind-Value="doctor.AddressLine2" For="@(() => doctor.AddressLine2)" />
-                    <MudSelect T="int" Label="Select Suburb" @bind-Value="@doctor.SuburbID" Placeholder="Please Select Qualification">
-                        @if (Suburbs == null)
+                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" required/>
+                    <MudSelect T="int" Label="Select Practice" @bind-Value="@doctor.PracticeId" Placeholder="Please Select Practice" For="@(() => doctor.PracticeId)">
+                        @if (Practices == null)
                         {
 
                         }
                         else
                         {
-                            @foreach (var s in Suburbs)
+                            @foreach (var s in Practices)
                             {
                                 <MudSelectItem T="int" Value="s.Id">@s.Name</MudSelectItem>
                               
                             }
                         }
                     </MudSelect>
-                    <MudSelect T="int?" Label="Select Qualification" @bind-Value="@doctor.QualificationId" Placeholder="Please Select Qualification">
-                        @if (Suburbs == null)
+                    <MudSelect T="int" Label="Select Qualification" @bind-Value="@doctor.QualificationId" For="@(() => doctor.QualificationId)">
+                        @if (Qualifications == null)
                         {
 
                         }
@@ -51,7 +48,7 @@
                         {
                             @foreach (var q in Qualifications)
                             {
-                                <MudSelectItem T="int?" Value="q.Id">
+                                <MudSelectItem T="int" Value="q.Id">
                                     @q.Description
                                 </MudSelectItem>
                             }
@@ -68,13 +65,15 @@
 
 
 @code {
-    private User doctor = new User();
-    private List<Suburb> Suburbs { get; set; }
+    //private User user = new User();
+    private InputModel doctor = new InputModel();
+    private List<Data.Practice> Practices { get; set; }
     private List<Qualification> Qualifications { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
-        Suburbs = await _p.GetSuburbsAsync();
+        Practices = await _p.GetPracticesAsync();
         Qualifications = await _p.GetQualificationsAsync();
     }
 
@@ -89,7 +88,8 @@
 
     private async Task Save()
     {
-        var result = await _p.Create(doctor);
+         User user = new User(doctor.FirstName, doctor.LastName, "Doctor", doctor.Email, doctor.PhoneNumber, doctor.PracticeId, doctor.QualificationId, doctor.RegistrationNo);
+           var result = await _p.Create(user);
 
         if (result.Data == true)
         {
@@ -100,5 +100,35 @@
         {
             _snackbar.Add("Failed to add Doctor, Please try again.", Severity.Warning);
         }
+    }
+
+    private class InputModel
+    {
+            [Required]
+            public string FirstName { get; set; }
+
+            [Required]
+            public string LastName { get; set; }
+
+
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+
+            [Required]
+            public string PhoneNumber { get; set; }
+
+            [Required]
+            public int QualificationId { get; set; }
+
+            [Required]
+            public string RegistrationNo { get; set; }
+
+            [Required]
+            public int PracticeId { get; set; }
+
+
+
+
     }
 }

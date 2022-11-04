@@ -35,6 +35,6 @@ namespace ePrescription.Data
         public int SuburbID { get; set; }
 
         public Suburb? Suburb { get; set; }
-        public User? Doctor { get; set; }
+        public ICollection<User>? Doctor { get; set; }
     }
 }
