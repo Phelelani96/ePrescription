@@ -15,6 +15,7 @@ public class User : IdentityUser
     {
 
     }
+    //Doctor Constructor
     public User(string firstName, string lastName, string discriminator,string email,string phoneNumber, int? practiceId, int? qualificationId, string? registrationNo)
     {
         FirstName = firstName;
@@ -25,6 +26,19 @@ public class User : IdentityUser
         PracticeId = practiceId;
         QualificationId = qualificationId;
         RegistrationNo = registrationNo;
+    }
+
+    //Pharmacist Constructor
+    public User(string firstName, string lastName, string discriminator, string email, string phoneNumber, int? pharmacyId, string? registrationNo)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Discriminator = discriminator;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        PharmacyId = pharmacyId;
+        RegistrationNo = registrationNo;
+
     }
 
     [Required]

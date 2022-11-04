@@ -37,6 +37,7 @@ builder.Services.AddScoped<IPracticeService, PracticeService>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 builder.Services.AddScoped<IMedicalHistoryService, MedicalHistoryService>();
 builder.Services.AddScoped<DoctorsController>();
+builder.Services.AddScoped<PharmacistsController>();
 
 builder.Services.AddScoped<PharmacyService>();
 builder.Services.AddMudServices();

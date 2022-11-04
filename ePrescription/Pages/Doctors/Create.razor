@@ -24,7 +24,7 @@
                     <MudTextField Label="Contact Number"
                                   @bind-Value="doctor.PhoneNumber" For="@(() => doctor.PhoneNumber)" />
                     <MudTextField Label="Registration Number"
-                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)" required/>
+                                  @bind-Value="doctor.RegistrationNo" For="@(() => doctor.RegistrationNo)"/>
                     <MudSelect T="int" Label="Select Practice" @bind-Value="@doctor.PracticeId" Placeholder="Please Select Practice" For="@(() => doctor.PracticeId)">
                         @if (Practices == null)
                         {
@@ -98,7 +98,7 @@
         }
         else
         {
-            _snackbar.Add("Failed to add Doctor, Please try again.", Severity.Warning);
+            _snackbar.Add(result.Message, Severity.Warning);
         }
     }
 

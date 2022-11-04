@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Controllers
 {
-    public class DoctorsController : Controller
+    public class PharmacistsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        public DoctorsController(ApplicationDbContext context, SignInManager<User> signInManager, UserManager<User> userManager)
+        public PharmacistsController(ApplicationDbContext context, SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _context = context;
             _signInManager = signInManager;
@@ -27,8 +27,8 @@ namespace ePrescription.Controllers
             try
             {
                 response.Data = await _context.Users
-                    .Include(d => d.Practice)
-                    .Include(d => d.Qualification).Where(u => u.Discriminator == "Doctor" && u.Status == "Active").ToListAsync();
+                    .Include(d => d.Pharmacy)
+                    .Where(u => u.Discriminator == "Pharmacist" && u.Status == "Active").ToListAsync();
                 return response;
             }
             catch
@@ -37,7 +37,7 @@ namespace ePrescription.Controllers
                 response.Success = false;
                 return response;
             }
-            
+
         }
 
         // GET: DoctorsController/Details/5
@@ -46,13 +46,13 @@ namespace ePrescription.Controllers
             var response = new ServiceResponse<User>();
             try
             {
-                if(id == null)
+                if (id == null)
                 {
                     response.Message = "An error occured while retrieving the data. If this persists, please contact the system administrator";
                     response.Success = false;
                     return response;
                 }
-                response.Data = await _context.Users.Where(u => u.Discriminator == "Doctor").FirstOrDefaultAsync(u => u.Id == id);
+                response.Data = await _context.Users.Where(u => u.Discriminator == "Pharmacist").FirstOrDefaultAsync(u => u.Id == id);
                 return response;
             }
             catch
@@ -61,7 +61,7 @@ namespace ePrescription.Controllers
                 response.Success = false;
                 return response;
             }
-            
+
         }
 
         // GET: DoctorsController/Create
@@ -76,35 +76,35 @@ namespace ePrescription.Controllers
         public async Task<ServiceResponse<bool>> Create(User user)
         {
             var response = new ServiceResponse<bool>();
-            User doctor = new User();
+            User pharmacist = new User();
             try
             {
-                doctor.FirstName = user.FirstName;
-                doctor.LastName = user.LastName;
-                doctor.Email = user.Email;
-                doctor.UserName = user.Email;
-                doctor.IDNumber = user.IDNumber;
-                doctor.AddressLine1 = user.AddressLine1;
-                doctor.AddressLine2 = user.AddressLine2;
-                //doctor.SuburbID = user.SuburbID;
-                doctor.QualificationId = user.QualificationId;
-                doctor.RegistrationNo = user.RegistrationNo;
-                doctor.PracticeId = user.PracticeId;
-                doctor.Discriminator = user.Discriminator;
-                doctor.Status = "Active";
-                doctor.PhoneNumber = user.PhoneNumber;
-                doctor.EmailConfirmed = true;
+                pharmacist.FirstName = user.FirstName;
+                pharmacist.LastName = user.LastName;
+                pharmacist.Email = user.Email;
+                pharmacist.UserName = user.Email;
+                pharmacist.IDNumber = user.IDNumber;
+                pharmacist.AddressLine1 = user.AddressLine1;
+                pharmacist.AddressLine2 = user.AddressLine2;
+                //pharmacistor.SuburbID = user.SuburbID;
+                //pharmacistor.QualificationId = user.QualificationId;
+                pharmacist.RegistrationNo = user.RegistrationNo;
+                pharmacist.PharmacyId = user.PharmacyId;
+                pharmacist.Discriminator = user.Discriminator;
+                pharmacist.Status = "Active";
+                pharmacist.PhoneNumber = user.PhoneNumber;
+                pharmacist.EmailConfirmed = true;
 
-                if(_context.Users.Any(u => u.Email == doctor.Email))
+                if (_context.Users.Any(u => u.Email == pharmacist.Email))
                 {
                     response.Data = false;
-                    response.Message = "Failed to add Doctor. Email already exists";
+                    response.Message = "Failed to add Pharmacist. Email already exists";
                     return response;
                 }
-                var result = await _userManager.CreateAsync(doctor, "A"+doctor.FirstName + "123!");
-                if(result.Succeeded)
+                var result = await _userManager.CreateAsync(pharmacist, "A" + pharmacist.FirstName + "123!");
+                if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Doctor.ToString());
+                    await _userManager.AddToRoleAsync(pharmacist, Roles.Doctor.ToString());
                     response.Data = true;
                     response.Success = true;
                     return response;
@@ -112,30 +112,27 @@ namespace ePrescription.Controllers
                 else
                 {
                     response.Data = false;
-                    response.Message = "Failed to add Doctor. If this persists, please contact your system administrator.";
+                    response.Message = "Failed to add Pharmacist. If this persists, please contact your system administrator.";
                     return response;
                 }
-                
+
             }
             catch
             {
                 response.Data = false;
-                response.Message = "Failed to add Doctor. If this persists, please contact your system administrator.";
+                response.Message = "Failed to add Pharmacist. If this persists, please contact your system administrator.";
                 return response;
             }
         }
-        public async Task<List<Suburb>> GetSuburbsAsync()
-        {
-            return await _context.Suburb.ToListAsync();
-        }
-        public async Task<List<Qualification>> GetQualificationsAsync()
-        {
-            return await _context.Qualification.ToListAsync();
-        }
-        public async Task<List<Practice>> GetPracticesAsync()
+        //public async Task<List<Suburb>> GetSuburbsAsync()
+        //{
+        //    return await _context.Suburb.ToListAsync();
+        //}
+      
+        public async Task<List<Pharmacy>> GetPharmaciesAsync()
         {
             //var result =  _context.Practice;
-            return await _context.Practice.ToListAsync();
+            return await _context.Pharmacy.ToListAsync();
         }
 
 
@@ -155,19 +152,19 @@ namespace ePrescription.Controllers
             //User doctor = new User();
             try
             {
-                
+
                 //if (id != null)
-                var doc = await _context.Users.FirstOrDefaultAsync(d => d.Id == id);
-                if(doc != null)
+                var pharmacist = await _context.Users.FirstOrDefaultAsync(d => d.Id == id);
+                if (pharmacist != null)
                 {
-                    doc.FirstName = user.FirstName;
-                    doc.LastName = user.LastName;
-                    doc.Email = user.Email;
-                    doc.QualificationId = user.QualificationId;
-                    doc.RegistrationNo = user.RegistrationNo;
-                    doc.PracticeId = user.PracticeId;
-                    doc.PhoneNumber = user.PhoneNumber;
-                    _context.Update(doc);
+                    pharmacist.FirstName = user.FirstName;
+                    pharmacist.LastName = user.LastName;
+                    pharmacist.Email = user.Email;
+                    //pharmacistoc.QualificationId = user.QualificationId;
+                    pharmacist.RegistrationNo = user.RegistrationNo;
+                    pharmacist.PharmacyId = user.PharmacyId;
+                    pharmacist.PhoneNumber = user.PhoneNumber;
+                    _context.Update(pharmacist);
                     await _context.SaveChangesAsync();
                     response.Data = true;
                     response.Success = true;
@@ -177,7 +174,7 @@ namespace ePrescription.Controllers
                 else
                 {
                     response.Data = false;
-                    response.Message = "Doctor was not found!";
+                    response.Message = "Pharmacist was not found!";
                     return response;
                 }
 
@@ -185,10 +182,10 @@ namespace ePrescription.Controllers
             catch
             {
                 response.Data = false;
-                response.Message = "Failed to update Doctor. If this persists, please contact your system administrator.";
+                response.Message = "Failed to update Pharmacist. If this persists, please contact your system administrator.";
                 return response;
             }
-       
+
         }
 
         // GET: DoctorsController/Delete/5
@@ -205,14 +202,14 @@ namespace ePrescription.Controllers
             var response = new ServiceResponse<bool>();
             try
             {
-                if(id == null)
+                if (id == null)
                 {
                     response.Success = false;
                     response.Data = false;
                     response.Message = "Doctor does not exist";
                 }
                 var doctor = await _context.Users.FindAsync(id);
-                if(doctor == null)
+                if (doctor == null)
                 {
                     response.Success = false;
                     response.Data = false;
@@ -235,3 +232,4 @@ namespace ePrescription.Controllers
         }
     }
 }
+
