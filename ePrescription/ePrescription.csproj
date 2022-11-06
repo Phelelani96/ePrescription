@@ -33,6 +33,7 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\DeleteDialog.razor" />
     <_ContentIncludedByDefault Remove="Pages\MedicalHistory\Index.razor" />
+    <_ContentIncludedByDefault Remove="Pages\Medicines\Create.razor" />
     <_ContentIncludedByDefault Remove="Pages\Patients.razor" />
     <_ContentIncludedByDefault Remove="Pages\Pharmacies\Pharmacies.razor" />
     <_ContentIncludedByDefault Remove="Pages\Practice.razor" />
@@ -65,6 +66,10 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Pages\MedicalHistory\Index.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Medicines\Create.razor" />
   </ItemGroup>
 
 </Project>

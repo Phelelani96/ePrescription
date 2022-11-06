@@ -1,0 +1,68 @@
+﻿@page "/conditions/update/{id:int}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Controllers
+@using System.ComponentModel.DataAnnotations
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inject DiagnosesController _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+
+<h3>Add Condition</h3>
+
+@if(condition == null)
+{
+    <p>Loading. . .</p>
+}
+else
+{
+    <EditForm Model="@condition" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator/>
+            <MudGrid>
+                 <MudItem xs="12" sm="12">
+                       <MudCard>
+                             <MudCardContent>
+                                                <MudTextField Label="ICD Code"
+                                                            @bind-Value="condition.ICD10_Code" For="@(() => condition.ICD10_Code)" />
+                                                <MudTextField Label="Description"
+                                                        @bind-Value="condition.Description" For="@(() => condition.Description)" />
+                                            </MudCardContent>
+                              <MudCardActions>
+                                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                                            </MudCardActions>
+                       </MudCard>
+                 </MudItem>
+            </MudGrid>
+    </EditForm>
+}                    
+
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+
+    private Data.Diagnosis condition = new Data.Diagnosis();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var c = await _service.Details(Convert.ToInt32(id));
+        condition = c.Data;
+    }
+
+
+    private async void OnValidSubmit()
+    {
+       
+        var x = await _service.Edit(Convert.ToInt32(id), condition);
+        if(x.Success == true)
+        {
+            _snackbar.Add(x.Message, Severity.Success);
+            _nav.NavigateTo("/conditions");
+        }
+        else
+        {
+            _snackbar.Add(x.Message, Severity.Warning);
+        }
+    }
+}

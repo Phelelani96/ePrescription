@@ -1,6 +1,7 @@
 ﻿@page "/doctors/update/{id}"
 @using MudBlazor
 @using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
 @using ePrescription.Controllers
 @using ePrescription.Areas.Identity.Data
 @inject IDialogService DialogService
@@ -153,13 +154,17 @@ else
         public string Email { get; set; }
 
         [Required]
+        [StringLength(10, ErrorMessage = "{0} must be 10 characters", MinimumLength = 10)]
+        [DisplayName("Phone Number")]
         public string PhoneNumber { get; set; }
 
         [Required]
         public int? QualificationId { get; set; }
 
         [Required]
-        public string? RegistrationNo { get; set; }
+        [StringLength(6, ErrorMessage = "{0} must be 6 characters", MinimumLength = 6)]
+        [DisplayName("Registration Number")]
+        public string RegistrationNo { get; set; }
 
         [Required]
         public int? PracticeId { get; set; }

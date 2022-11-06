@@ -83,7 +83,16 @@
         //StateHasChanged();
 
         var x = await _service.UpdatePractice(practice.Id);
-        _snackbar.Add("Practice successfully Updated!", Severity.Success);
-        _nav.NavigateTo("/practice-list");
+        if (x.Success == true)
+        {
+            _snackbar.Add(x.Message, Severity.Success);
+            _nav.NavigateTo("/practices");
+        }
+        else
+        {
+            _snackbar.Add(x.Message, Severity.Warning);
+        }
+        //_snackbar.Add("Practice successfully Updated!", Severity.Success);
+        //_nav.NavigateTo("/practices");
     }
 }

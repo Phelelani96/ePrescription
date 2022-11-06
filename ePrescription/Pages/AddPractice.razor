@@ -8,7 +8,7 @@
 @inject IPracticeService _service
 @inject NavigationManager _nav
 @inject ISnackbar _snackbar
-<h3>AddPractice</h3>
+<h3>Add Practice</h3>
 
                     @if(Suburbs == null)
                     {
@@ -92,10 +92,10 @@
         //StateHasChanged();
 
         var x = await _service.AddPractice(practice);
-        if(x.Success)
+        if(x.Success == true)
         {
             _snackbar.Add(x.Message, Severity.Success);
-            _nav.NavigateTo("/practice-list");
+            _nav.NavigateTo("/practices");
         }
         else
         {

@@ -1,10 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ePrescription.Data.Viewmodels;
+using ePrescription.Shared;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Controllers
 {
     public class MedicinesController : Controller
     {
+        private readonly ApplicationDbContext _Context;
+        public MedicinesController(ApplicationDbContext Context)
+        {
+            _Context = Context;
+        }
         // GET: MedicinesController
         public ActionResult Index()
         {
@@ -12,9 +20,17 @@ namespace ePrescription.Controllers
         }
 
         // GET: MedicinesController/Details/5
-        public ActionResult Details(int id)
+        public async Task<List<Ingredients>> GetIngredientsAsync()
         {
-            return View();
+            return await _Context.Ingredients.ToListAsync();
+        }
+        public async Task<List<Dosage_Form>> GetDosagesAsync()
+        {
+            return await _Context.Dosage_Form.ToListAsync();
+        }
+        public async Task<List<Schedule>> GetSchedulesAsync()
+        {
+            return await _Context.Schedule.ToListAsync();
         }
 
         // GET: MedicinesController/Create
@@ -26,15 +42,17 @@ namespace ePrescription.Controllers
         // POST: MedicinesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ServiceResponse<bool>> Create(MedicineViewModel medicine)
         {
+            var response = new ServiceResponse<bool>();
             try
             {
-                return RedirectToAction(nameof(Index));
+                
+                return response;
             }
             catch
             {
-                return View();
+                return response;
             }
         }
 
@@ -59,25 +77,25 @@ namespace ePrescription.Controllers
             }
         }
 
-        // GET: MedicinesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //// GET: MedicinesController/Delete/5
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
 
         // POST: MedicinesController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Delete(int id, IFormCollection collection)
+        //{
+        //    try
+        //    {
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
     }
 }

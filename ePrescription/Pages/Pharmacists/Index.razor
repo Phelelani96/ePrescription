@@ -1,6 +1,133 @@
 ﻿@page "/pharmacists"
-<h3>Pharmacists List</h3>
+@using MudBlazor
+@using ePrescription.Controllers
+@using ePrescription.Areas.Identity.Data
+@using ePrescription.Pages.Shared
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject PharmacistsController _p;
+
+
+@if (pharmacists == null)
+{
+    <p>Loading . . .</p>
+}
+else
+{
+    @if (pharmacists.Count() == 0)
+    {
+        <h4>Nothing to display</h4>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" Href="/pharmacists/create">Add Doctor</MudButton>
+    }
+    else
+    {
+        <MudTable Items="@pharmacists" Hover="true" Filter="new Func<User,bool>(FilterFunc1)">
+            <ToolBarContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Info" Href="/pharmacists/create">Add Pharmacist</MudButton>
+                <MudSpacer />
+                <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Contact Number</MudTh>
+                @*<MudTh>Highest Qualification</MudTh>*@
+                <MudTh>Pharmacy</MudTh>
+                <MudTh>Registration Number</MudTh>
+                <MudTh>Options</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="FullName">@context.FullName</MudTd>
+                <MudTd DataLabel="Email">@context.Email</MudTd>
+                <MudTd DataLabel="ContactNo">@context.PhoneNumber</MudTd>
+                
+                <MudTd DataLabel="PracticeId">@context.Pharmacy.Name</MudTd>
+                <MudTd DataLabel="RegistrationNo">@context.RegistrationNo</MudTd>
+                <MudTd>
+
+                    <a class="btn btn-primary btn-sm" href="/pharmacists/update/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePharmacist(@context.Id))" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>
+                </MudTd>
+
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    }
+
+}
+
 
 @code {
+    private List<User> pharmacists { get; set; }
 
+    private string? searchString1;
+    protected override async Task OnInitializedAsync()
+    {
+
+        await pharmaList();
+    }
+
+    private bool FilterFunc1(User user) => FilterFunc(user, searchString1);
+
+    private bool FilterFunc(User user, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (user.FirstName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (user.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (user.IDNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        return false;
+    }
+
+    private async Task DeletePharmacist(string id)
+    {
+        var x = new ServiceResponse<bool>();
+
+        if (id != null)
+        {
+            var pharma = await _p.Details(id);
+            if (pharma != null)
+            {
+                var parameters = new DialogParameters();
+                parameters.Add("ContentText", "Are you sure you want to delete " + pharma.Data.FullName.ToString() + "?");
+                parameters.Add("ButtonText", "Delete");
+                parameters.Add("Color", Color.Error);
+
+                var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+                var dialog = DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+                var result = await dialog.Result;
+
+                if (!result.Cancelled)
+                {
+                    x = await _p.Delete(pharma.Data.Id);
+                    if (x.Success == true)
+                    {
+                        _snackbar.Add(pharma.Data.FullName + " Successfully deleted!", Severity.Error);
+                        await pharmaList();
+                    }
+                    else
+                    {
+                        _snackbar.Add(x.Message, Severity.Warning);
+                    }
+                }
+
+            }
+        }
+
+    }
+
+
+    private async Task pharmaList()
+    {
+        var P = await _p.Index();
+
+        pharmacists = P.Data;
+    }
 }
