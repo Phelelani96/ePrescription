@@ -1,0 +1,112 @@
+﻿@page "/conditions"
+@using ePrescription.Controllers
+@using ePrescription.Pages.Shared
+
+@inject DiagnosesController _service
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+
+<h3>Conditions List</h3>
+@if (conditions == null)
+{
+    <p>Loading . . .</p>
+}
+else
+{
+    <MudTable Items="@conditions" Hover="true" Filter="new Func<Diagnosis,bool>(FilterFunc1)">
+        <ToolBarContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Href="/conditions/create">Add Condition</MudButton>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>ICD</MudTh>
+            <MudTh>Descriptions</MudTh>
+            <MudTh>Options</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="ICD10_Code">@context.ICD10_Code</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+       
+            <MudTd>
+
+                <a class="btn btn-primary btn-sm" href="/conditions/update/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+                @*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>*@
+            </MudTd>
+
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
+
+
+@code {
+    private string? searchString1;
+    private List<Data.Diagnosis> conditions { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Conditions();
+    }
+
+    private bool FilterFunc1(Diagnosis condition) => FilterFunc(condition, searchString1);
+
+    private bool FilterFunc(Diagnosis condition, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (condition.ICD10_Code.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (condition.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+    private async Task DeletePractice(int? id)
+    {
+        //var x = new ServiceResponse<bool>();
+
+        //if (id != null)
+        //{
+        //    var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
+        //    if (p != null)
+        //    {
+        //        var parameters = new DialogParameters();
+        //        parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
+        //        parameters.Add("ButtonText", "Delete");
+        //        parameters.Add("Color", Color.Error);
+
+        //        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        //        var dialog = DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+        //        var result = await dialog.Result;
+
+        //        if (!result.Cancelled)
+        //        {
+        //            x = await _service.DeletePracticeAsync(p.Data.Id);
+        //            if (x.Success == true)
+        //            {
+        //                _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
+        //                await PracticeList();
+        //            }
+        //            else
+        //            {
+        //                _snackbar.Add(p.Message, Severity.Warning);
+        //            }
+        //        }
+
+        //    }
+        //}
+
+    }
+
+    private async Task Conditions()
+    {
+        var P = await _service.Index();
+
+        conditions = P.Data;
+    }
+}

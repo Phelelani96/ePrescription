@@ -1,0 +1,107 @@
+﻿@page "/medication/create"
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Controllers
+@using ePrescription.Data.Viewmodels
+@using System.ComponentModel.DataAnnotations
+@using ePrescription.Shared
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inject MedicinesController _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+
+<h3>Add Medicine</h3>
+
+                  
+<EditForm Model="@medicine" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+        <MudGrid>
+             <MudItem xs="12" sm="12">
+                   <MudCard>
+                          <MudCardContent>
+                           <MudTextField Label="Name"
+                                                    @bind-Value="medicine.Name" For="@(() => medicine.Name)" /> 
+                           <MudSelect T="int" Label="Select Dosage" @bind-Value="@medicine.Dosage_FormId" For="@(() => medicine.Dosage_FormId)">
+                                @if (dosages == null)
+                                {
+
+                                }
+                                else
+                                {
+                                    @foreach (var d in dosages)
+                                    {
+                                        <MudSelectItem T="int" Value="d.Id">
+                                            @d.Description
+                                        </MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                           <MudTextField Label="Name"
+                                                    @bind-Value="medicine.MedSizeId" For="@(() => medicine.MedSizeId)" />
+                           <MudSelect T="int" Label="Select Schedule" @bind-Value="@medicine.ScheduleId" For="@(() => medicine.ScheduleId)">
+                                @if (schedules == null)
+                                {
+
+                                }
+                                else
+                                {
+                                    @foreach (var s in schedules)
+                                    {
+                                        <MudSelectItem T="int" Value="s.Id">
+                                            @s.Description
+                                        </MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
+                          @* <MudTextField Label="Name"
+                                                    @bind-Value="medicine.Name" For="@(() => medicine.Name)" />*@
+                          
+                          </MudCardContent>
+                          <MudCardActions>
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                          </MudCardActions>
+                   </MudCard>
+             </MudItem>
+        </MudGrid>
+</EditForm>
+                    
+
+
+@code {
+
+    private MedicineViewModel medicine = new MedicineViewModel();
+    private List<Dosage_Form> dosages { get; set; } = new List<Dosage_Form>();
+    private List<Schedule> schedules { get; set; } = new List<Schedule>();
+    //var items { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        //items = await _service.GetIngredientsAsync();
+        //medicine.ActiveIngredients = items.Select(al => new CheckItem()
+        //    {
+        //        Id = al.Id,
+        //        Name = al.Description,
+        //        Strength = "",
+        //        IsChecked = false;
+
+        //}).ToList();;
+
+       dosages = await _service.GetDosagesAsync();
+       schedules = await _service.GetSchedulesAsync();
+    }
+
+
+    private async void OnValidSubmit()
+    {
+       
+        //var x = await _service.Create(condition);
+        //if(x.Success == true)
+        //{
+        //    _snackbar.Add(x.Message, Severity.Success);
+        //    _nav.NavigateTo("/conditions");
+        //}
+        //else
+        //{
+        //    _snackbar.Add(x.Message, Severity.Warning);
+        //}
+    }
+}

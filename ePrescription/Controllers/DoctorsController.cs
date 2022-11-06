@@ -37,7 +37,7 @@ namespace ePrescription.Controllers
                 response.Success = false;
                 return response;
             }
-            
+
         }
 
         // GET: DoctorsController/Details/5
@@ -46,7 +46,7 @@ namespace ePrescription.Controllers
             var response = new ServiceResponse<User>();
             try
             {
-                if(id == null)
+                if (id == null)
                 {
                     response.Message = "An error occured while retrieving the data. If this persists, please contact the system administrator";
                     response.Success = false;
@@ -61,7 +61,7 @@ namespace ePrescription.Controllers
                 response.Success = false;
                 return response;
             }
-            
+
         }
 
         // GET: DoctorsController/Create
@@ -95,16 +95,16 @@ namespace ePrescription.Controllers
                 doctor.PhoneNumber = user.PhoneNumber;
                 doctor.EmailConfirmed = true;
 
-                if(_context.Users.Any(u => u.Email == doctor.Email))
+                if (_context.Users.Any(u => u.Email == doctor.Email))
                 {
                     response.Data = false;
                     response.Message = "Failed to add Doctor. Email already exists";
                     return response;
                 }
-                var result = await _userManager.CreateAsync(doctor, "A"+doctor.FirstName + "123!");
-                if(result.Succeeded)
+                var result = await _userManager.CreateAsync(doctor, "A" + doctor.FirstName + "123!");
+                if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Doctor.ToString());
+                    await _userManager.AddToRoleAsync(doctor, Roles.Doctor.ToString());
                     response.Data = true;
                     response.Success = true;
                     return response;
@@ -115,7 +115,7 @@ namespace ePrescription.Controllers
                     response.Message = "Failed to add Doctor. If this persists, please contact your system administrator.";
                     return response;
                 }
-                
+
             }
             catch
             {
@@ -135,7 +135,7 @@ namespace ePrescription.Controllers
         public async Task<List<Practice>> GetPracticesAsync()
         {
             //var result =  _context.Practice;
-            return await _context.Practice.ToListAsync();
+            return await _context.Practice.Include(p => p.Suburb).ToListAsync();
         }
 
 
@@ -155,10 +155,10 @@ namespace ePrescription.Controllers
             //User doctor = new User();
             try
             {
-                
+
                 //if (id != null)
                 var doc = await _context.Users.FirstOrDefaultAsync(d => d.Id == id);
-                if(doc != null)
+                if (doc != null)
                 {
                     doc.FirstName = user.FirstName;
                     doc.LastName = user.LastName;
@@ -188,7 +188,7 @@ namespace ePrescription.Controllers
                 response.Message = "Failed to update Doctor. If this persists, please contact your system administrator.";
                 return response;
             }
-       
+
         }
 
         // GET: DoctorsController/Delete/5
@@ -205,14 +205,14 @@ namespace ePrescription.Controllers
             var response = new ServiceResponse<bool>();
             try
             {
-                if(id == null)
+                if (id == null)
                 {
                     response.Success = false;
                     response.Data = false;
                     response.Message = "Doctor does not exist";
                 }
                 var doctor = await _context.Users.FindAsync(id);
-                if(doctor == null)
+                if (doctor == null)
                 {
                     response.Success = false;
                     response.Data = false;

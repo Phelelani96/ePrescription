@@ -1,6 +1,7 @@
 ﻿@page "/doctors/create"
 @using MudBlazor
 @using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
 @using ePrescription.Controllers
 @using ePrescription.Areas.Identity.Data
 @inject IDialogService DialogService
@@ -34,7 +35,7 @@
                         {
                             @foreach (var s in Practices)
                             {
-                                <MudSelectItem T="int" Value="s.Id">@s.Name</MudSelectItem>
+                                <MudSelectItem T="int" Value="s.Id">@s.Name: @s.Suburb.Name</MudSelectItem>
                               
                             }
                         }
@@ -93,6 +94,7 @@
 
         if (result.Data == true)
         {
+            //await InvokeAsync(() => StateHasChanged());
             _snackbar.Add("Doctor added successfully!.", Severity.Success);
             _nav.NavigateTo("/doctors");
         }
@@ -116,12 +118,16 @@
             public string Email { get; set; }
 
             [Required]
+            [StringLength(10, ErrorMessage = "{0} must be 10 characters", MinimumLength = 10)]
+            [DisplayName("Phone Number")]
             public string PhoneNumber { get; set; }
 
             [Required]
             public int QualificationId { get; set; }
 
             [Required]
+            [StringLength(6, ErrorMessage = "{0} must be 6 characters", MinimumLength = 6)]
+            [DisplayName("Registration Number")]
             public string RegistrationNo { get; set; }
 
             [Required]

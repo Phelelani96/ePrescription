@@ -1,7 +1,153 @@
 ﻿@page "/pharmacists/update/{id}"
-<h3>Update</h3>
+@using MudBlazor
+@using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
+@using ePrescription.Controllers
+@using ePrescription.Areas.Identity.Data
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _nav
+@inject PharmacistsController _p
+
+<h3>Update Doctor</h3>
+@if (pharmacist == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@pharmacist" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <MudGrid>
+            <MudItem xs="12" sm="12">
+                <MudCard>
+                    <MudCardContent>
+                        <MudTextField @bind-Value="pharmacist.Id" hidden />
+                        <MudTextField Label="First Name"
+                                  @bind-Value="pharmacist.FirstName" For="@(() => pharmacist.FirstName)" />
+                        <MudTextField Label="Last Name"
+                                  @bind-Value="pharmacist.LastName" For="@(() => pharmacist.LastName)" />
+                        <MudTextField Label="Email"
+                                  @bind-Value="pharmacist.Email" For="@(() => pharmacist.Email)" />
+                        <MudTextField Label="Contact Number"
+                                  @bind-Value="pharmacist.PhoneNumber" For="@(() => pharmacist.PhoneNumber)" />
+                        <MudTextField Label="Registration Number"
+                                  @bind-Value="pharmacist.RegistrationNo" For="@(() => pharmacist.RegistrationNo)" />
+                        <MudSelect T="int?" Label="Select Pharmacy" @bind-Value="@pharmacist.PharmacyId" Placeholder="Please Select Pharmacy" For="@(() => pharmacist.PharmacyId)">
+                            @if (Pharmacies == null)
+                            {
+
+                            }
+                            else
+                            {
+                                @foreach (var s in Pharmacies)
+                                {
+                                    <MudSelectItem T="int?" Value="s.Id">@s.Name</MudSelectItem>
+
+                                }
+                            }
+                        </MudSelect>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </EditForm>
+}
+
 
 @code {
     [Parameter]
     public string? id { get; set; }
+
+    private InputModel pharmacist { get; set; } = new InputModel();
+    private User? user { get; set; } = new User();
+    private List<Data.Pharmacy> Pharmacies { get; set; }
+    ServiceResponse<User> pharma = new ServiceResponse<User>();
+    ServiceResponse<bool> result = new ServiceResponse<bool>();
+    protected override async Task OnInitializedAsync()
+    {
+        Pharmacies = await _p.GetPharmaciesAsync();
+       
+        if (id != null)
+            pharma = await _p.Details(id);
+        if (pharma.Data != null)
+        {
+            //doctor = doc.Data;
+            pharmacist.Id = pharma.Data.Id;
+            pharmacist.FirstName = pharma.Data.FirstName;
+            pharmacist.LastName = pharma.Data.LastName;
+            pharmacist.Email = pharma.Data.Email;
+            pharmacist.PhoneNumber = pharma.Data.PhoneNumber;
+            
+            pharmacist.PharmacyId = pharma.Data.PharmacyId;
+            pharmacist.RegistrationNo = pharma.Data.RegistrationNo;
+        }
+
+
+    }
+
+    //private async Task GetSuburbs()
+    //{
+    //    Suburbs = await _p.GetSuburbsAsync();
+    //}
+    //private async Task GetQualifications()
+    //{
+    //    Qualifications = await _p.GetQualificationsAsync();
+    //}
+
+    private async Task Save()
+    {
+        user.Id = pharmacist.Id;
+        user.FirstName = pharmacist.FirstName;
+        user.LastName = pharmacist.LastName;
+        user.Email = pharmacist.Email;
+        user.PhoneNumber = pharmacist.PhoneNumber;
+        user.PharmacyId = pharmacist.PharmacyId;
+        user.RegistrationNo = pharmacist.RegistrationNo;
+        result = await _p.Edit(id, user);
+
+
+        if (result.Data == true)
+        {
+            _snackbar.Add("Pharmacist updated successfully!.", Severity.Success);
+            _nav.NavigateTo("/pharmacists");
+        }
+        else
+        {
+            _snackbar.Add(result.Message, Severity.Warning);
+        }
+    }
+
+    private class InputModel
+    {
+        public string Id { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(10, ErrorMessage = "{0} must be 10 characters", MinimumLength = 10)]
+        [DisplayName("Phone Number")]
+        public string PhoneNumber { get; set; }
+
+
+        [Required]
+        [StringLength(6, ErrorMessage = "{0} must be 6 characters", MinimumLength = 6)]
+        [DisplayName("Registration Number")]
+        public string RegistrationNo { get; set; }
+
+        [Required]
+        public int? PharmacyId { get; set; }
+
+    }
 }

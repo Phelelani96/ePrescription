@@ -555,6 +555,8 @@ namespace ePrescription.Data
                     Description = "High Cholesterol"
                 });
 
+
+
         }
         public DbSet<User> Users { get; set; }
 

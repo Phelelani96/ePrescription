@@ -1,9 +1,13 @@
-﻿namespace ePrescription.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ePrescription.Data
 {
     public class Diagnosis
     {
         public int Id { get; set; }
+        [Required]
         public string ICD10_Code { get; set; }
+        [Required]
         public string Description { get; set; }
 
         //Nabigation..
