@@ -13,25 +13,34 @@
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="Input.FirstName"></label>
                         <input asp-for="Input.FirstName" class="form-control"  aria-required="true" />
                         <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="Input.LastName"></label>
                         <input asp-for="Input.LastName" class="form-control"  aria-required="true" />
                         <span asp-validation-for="Input.LastName" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-4">
+            </div>
+            <div class="row">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="Input.IDNumber"></label>
                         <input asp-for="Input.IDNumber" class="form-control"  aria-required="true" />
                         <span asp-validation-for="Input.IDNumber" class="text-danger"></span>
+                    </div>  
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Input.PhoneNumber"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control"  aria-required="true" />
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                     </div>  
                 </div>
             </div>
@@ -53,7 +62,10 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label asp-for="Input.SuburbID"></label>
-                        <input asp-for="Input.SuburbID" class="form-control" aria-required="true" />
+                           <select asp-for="Input.SuburbID" asp-items="@ViewBag.SuburbId" class="form-control">
+                               <option value="0"> >>Select Suburb<< </option>
+                            </select>
+                        @*<input asp-for="Input.SuburbID" class="form-control" aria-required="true" />*@
                         <span asp-validation-for="Input.SuburbID" class="text-danger"></span>
                 </div>  
                 </div>

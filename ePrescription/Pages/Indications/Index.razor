@@ -1,0 +1,111 @@
+﻿@page "/contra-indications"
+@using ePrescription.Controllers
+@using ePrescription.Pages.Shared
+
+@inject Contra_IndicationsController _service
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+
+<h3>Contra indications List</h3>
+@if (indications == null)
+{
+    <p>Loading . . .</p>
+}
+else
+{
+    <MudTable Items="@indications" Hover="true" Filter="new Func<Contra_Indication,bool>(FilterFunc1)">
+        <ToolBarContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Href="/contra-indications/create">Add Contra Indication</MudButton>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Active Ingredient</MudTh>
+            <MudTh>Condition</MudTh>
+            <MudTh>Options</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Active Ingredient">@context.Ingredient.Description</MudTd>
+            <MudTd DataLabel="Condition">@context.Diagnosis.Description</MudTd>
+
+            <MudTd>
+
+                <a class="btn btn-primary btn-sm" href="/contra-indication/update/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+                @*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>*@
+            </MudTd>
+
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
+
+
+@code {
+    private string? searchString1;
+    private List<Data.Contra_Indication> indications { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Conditions();
+    }
+
+    private bool FilterFunc1(Contra_Indication indication) => FilterFunc(indication, searchString1);
+
+    private bool FilterFunc(Contra_Indication indication, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (indication.Ingredient.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (indication.Diagnosis.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+    //private async Task DeletePractice(int? id)
+    //{
+    //    //var x = new ServiceResponse<bool>();
+
+    //    //if (id != null)
+    //    //{
+    //    //    var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
+    //    //    if (p != null)
+    //    //    {
+    //    //        var parameters = new DialogParameters();
+    //    //        parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
+    //    //        parameters.Add("ButtonText", "Delete");
+    //    //        parameters.Add("Color", Color.Error);
+
+    //    //        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+    //    //        var dialog = DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+    //    //        var result = await dialog.Result;
+
+    //    //        if (!result.Cancelled)
+    //    //        {
+    //    //            x = await _service.DeletePracticeAsync(p.Data.Id);
+    //    //            if (x.Success == true)
+    //    //            {
+    //    //                _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
+    //    //                await PracticeList();
+    //    //            }
+    //    //            else
+    //    //            {
+    //    //                _snackbar.Add(p.Message, Severity.Warning);
+    //    //            }
+    //    //        }
+
+    //    //    }
+    //    //}
+
+    //}
+
+    private async Task Conditions()
+    {
+
+        indications = await _service.Index();
+    }
+}

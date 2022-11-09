@@ -16,6 +16,7 @@ namespace ePrescription.Data
 
         [Required]
         [Display(Name = "Contact Number")]
+        [Phone]
         [StringLength(10, ErrorMessage = "Contact length can't be more than 10.")]
         public string ContactNo { get; set; } = string.Empty;
 
@@ -32,6 +33,7 @@ namespace ePrescription.Data
         public string? AddressLine2 { get; set; }
 
         [Required]
+        [Range(1, 100000000, ErrorMessage = "Please select Suburb")]
         public int SuburbID { get; set; }
 
         public Suburb? Suburb { get; set; }

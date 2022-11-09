@@ -1,14 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ePrescription.Shared;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Controllers
 {
+    
     public class IngredientsController : Controller
     {
-        // GET: IngredientsController
-        public ActionResult Index()
+        private readonly ApplicationDbContext _context;
+        public IngredientsController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+        // GET: IngredientsController
+        public async Task<ServiceResponse<List<Ingredients>>> Index()
+        {
+            var response = new ServiceResponse<List<Ingredients>>();
+            response.Data = await _context.Ingredients.ToListAsync();
+            return response;
         }
 
         // GET: IngredientsController/Details/5
@@ -26,15 +36,31 @@ namespace ePrescription.Controllers
         // POST: IngredientsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ServiceResponse<bool>> Create(Ingredients ingredient)
         {
+            var response = new ServiceResponse<bool>();
             try
             {
-                return RedirectToAction(nameof(Index));
+                if(_context.Ingredients.Any(i => i.Description == ingredient.Description))
+                {
+                    response.Success = false;
+                    response.Message = "Ingredient already exists";
+                    return response;
+                }
+                else
+                {
+                    _context.Add(ingredient);
+                    await _context.SaveChangesAsync();
+                    response.Message = "Ingredient added successfully!";
+                    return response;
+                }
+                
             }
             catch
             {
-                return View();
+                response.Success = false;
+                response.Message = "Failed to add Ingredient. If this persists, contact your system administrator.";
+                return response;
             }
         }
 

@@ -104,6 +104,7 @@
 
             [Required]
             [StringLength(10, ErrorMessage = "{0} must be 10 characters", MinimumLength = 10)]
+            [Phone]
             [DisplayName("Phone Number")]
             public string PhoneNumber { get; set; }
 
@@ -114,6 +115,7 @@
             public string RegistrationNo { get; set; }
 
             [Required]
+        [Range(1, 100000000, ErrorMessage = "Please select Condition")]
             public int PharmacyId { get; set; }
 
 

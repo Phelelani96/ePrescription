@@ -142,7 +142,7 @@ namespace ePrescription.Migrations
                             Id = "abc-123-ABC-246-aec",
                             AccessFailedCount = 0,
                             AddressLine1 = "14 8th Avenue",
-                            ConcurrencyStamp = "78d1c0bc-006c-42f7-b40c-35d1a4b90ac3",
+                            ConcurrencyStamp = "6f16a640-b662-423f-abae-d62e7e844f15",
                             Discriminator = "Admin",
                             Email = "tonystark@gmail.com",
                             EmailConfirmed = true,
@@ -152,10 +152,10 @@ namespace ePrescription.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TONYSTARK@GMAIL.COM",
                             NormalizedUserName = "TONYSTARK@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJH/OyTZIYAxRQJBgOVblb+25KPBsAXTmWt1zZ50tuR5dDkGJ51lR6Ri/V1nzmaXKw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKBirJSKY6hB6qbljyXqQvlPD5sbOsMtPUX4rhooe8Vh8Y7WfJHLvd0IO2llshkx+w==",
                             PhoneNumber = "0780509071",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "5cce9d62-e1b6-4ce7-a1b9-e841839f18ee",
+                            SecurityStamp = "7905ac3f-22ac-49f7-a695-411873ffc5bc",
                             Status = "Active",
                             SuburbID = 1,
                             TwoFactorEnabled = false,
@@ -267,16 +267,11 @@ namespace ePrescription.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SeverityId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DiagnosisId");
 
                     b.HasIndex("IngredientId");
-
-                    b.HasIndex("SeverityId");
 
                     b.ToTable("Contra_Indications");
                 });
@@ -429,6 +424,9 @@ namespace ePrescription.Migrations
                     b.Property<int>("MedicineId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Medical_HistoryId");
@@ -542,6 +540,29 @@ namespace ePrescription.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ePrescription.Data.Interaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Ingredient1Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Ingredient2Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Ingredient1Id");
+
+                    b.HasIndex("Ingredient2Id");
+
+                    b.ToTable("Interactions");
+                });
+
             modelBuilder.Entity("ePrescription.Data.Med_Ingredients", b =>
                 {
                     b.Property<int>("Id")
@@ -587,9 +608,6 @@ namespace ePrescription.Migrations
                     b.Property<int>("DiagnosisId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Medical_HistoryId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MedicineId")
                         .HasColumnType("int");
 
@@ -600,8 +618,6 @@ namespace ePrescription.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DiagnosisId");
-
-                    b.HasIndex("Medical_HistoryId");
 
                     b.HasIndex("MedicineId");
 
@@ -821,7 +837,6 @@ namespace ePrescription.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PharmacistId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("PrescriptionId")
@@ -831,6 +846,9 @@ namespace ePrescription.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Repetition")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepetitionLeft")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -1187,28 +1205,28 @@ namespace ePrescription.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "4ef72101-4504-4411-8002-37b8c424630e",
+                            ConcurrencyStamp = "299d73c5-f200-4f6e-b122-19e3439be365",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "48e1ce43-b1ea-4ff9-9702-68eed9406747",
+                            ConcurrencyStamp = "fca343a8-8e4b-424b-94d7-6ce721679013",
                             Name = "Doctor",
                             NormalizedName = "DOCTOR"
                         },
                         new
                         {
                             Id = "3",
-                            ConcurrencyStamp = "fb20f88e-a009-43b1-a704-0c4a96005c28",
+                            ConcurrencyStamp = "82a1dd3f-3312-47bd-b9dd-545d50ddbd68",
                             Name = "Pharmacist",
                             NormalizedName = "PHARMACIST"
                         },
                         new
                         {
                             Id = "4",
-                            ConcurrencyStamp = "2e6b493d-325c-4f61-993d-3658422e218c",
+                            ConcurrencyStamp = "bb219bd2-e0c4-4254-b73f-f9994dee9dce",
                             Name = "Patient",
                             NormalizedName = "PATIENT"
                         });
@@ -1388,23 +1406,15 @@ namespace ePrescription.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ePrescription.Data.Severity", "Severity")
-                        .WithMany("Contra_Indications")
-                        .HasForeignKey("SeverityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Diagnosis");
 
                     b.Navigation("Ingredient");
-
-                    b.Navigation("Severity");
                 });
 
             modelBuilder.Entity("ePrescription.Data.History_Medication", b =>
                 {
                     b.HasOne("ePrescription.Data.Medical_History", "Medical_History")
-                        .WithMany()
+                        .WithMany("History")
                         .HasForeignKey("Medical_HistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1418,6 +1428,25 @@ namespace ePrescription.Migrations
                     b.Navigation("Medical_History");
 
                     b.Navigation("Medicine");
+                });
+
+            modelBuilder.Entity("ePrescription.Data.Interaction", b =>
+                {
+                    b.HasOne("ePrescription.Data.Ingredients", "Ingredient1")
+                        .WithMany()
+                        .HasForeignKey("Ingredient1Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ePrescription.Data.Ingredients", "Ingredient2")
+                        .WithMany()
+                        .HasForeignKey("Ingredient2Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient1");
+
+                    b.Navigation("Ingredient2");
                 });
 
             modelBuilder.Entity("ePrescription.Data.Med_Ingredients", b =>
@@ -1446,10 +1475,6 @@ namespace ePrescription.Migrations
                         .HasForeignKey("DiagnosisId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ePrescription.Data.Medical_History", null)
-                        .WithMany("History")
-                        .HasForeignKey("Medical_HistoryId");
 
                     b.HasOne("ePrescription.Data.Medicine", null)
                         .WithMany("History")
@@ -1553,12 +1578,10 @@ namespace ePrescription.Migrations
 
                     b.HasOne("ePrescription.Areas.Identity.Data.User", "Pharmacist")
                         .WithMany()
-                        .HasForeignKey("PharmacistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PharmacistId");
 
                     b.HasOne("ePrescription.Data.Prescription", "Prescription")
-                        .WithMany()
+                        .WithMany("Prescription_Details")
                         .HasForeignKey("PrescriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1681,6 +1704,11 @@ namespace ePrescription.Migrations
                     b.Navigation("Doctor");
                 });
 
+            modelBuilder.Entity("ePrescription.Data.Prescription", b =>
+                {
+                    b.Navigation("Prescription_Details");
+                });
+
             modelBuilder.Entity("ePrescription.Data.Province", b =>
                 {
                     b.Navigation("Cities");
@@ -1694,11 +1722,6 @@ namespace ePrescription.Migrations
             modelBuilder.Entity("ePrescription.Data.Schedule", b =>
                 {
                     b.Navigation("Medicines");
-                });
-
-            modelBuilder.Entity("ePrescription.Data.Severity", b =>
-                {
-                    b.Navigation("Contra_Indications");
                 });
 
             modelBuilder.Entity("ePrescription.Data.Suburb", b =>

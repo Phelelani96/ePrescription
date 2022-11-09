@@ -43,7 +43,7 @@ else
                             {
                                 @foreach (var s in Practices)
                                 {
-                                    <MudSelectItem T="int?" Value="s.Id">@s.Name</MudSelectItem>
+                                    <MudSelectItem T="int?" Value="s.Id">@s.Name: @s.Suburb.Name</MudSelectItem>
 
                                 }
                             }
@@ -159,6 +159,7 @@ else
         public string PhoneNumber { get; set; }
 
         [Required]
+        [Range(1, 100000000, ErrorMessage = "Please select Condition")]
         public int? QualificationId { get; set; }
 
         [Required]
@@ -167,6 +168,7 @@ else
         public string RegistrationNo { get; set; }
 
         [Required]
+        [Range(1, 100000000, ErrorMessage = "Please select Condition")]
         public int? PracticeId { get; set; }
 
     }

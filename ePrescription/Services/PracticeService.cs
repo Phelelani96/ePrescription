@@ -18,7 +18,7 @@ namespace ePrescription.Services
             var response = new ServiceResponse<List<Practice>>();
             try
             {
-                response.Data = await _context.Practice.ToListAsync();
+                response.Data = await _context.Practice.Include(p => p.Suburb).ToListAsync();
                 return response;
             }
             catch

@@ -1,0 +1,79 @@
+﻿@page "/medication/details/{id}"
+@using ePrescription.Controllers
+@using ePrescription.Pages.Shared
+@using ePrescription.Data
+@using ePrescription.Shared
+@inject MedicinesController _service
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+
+<h3>Medication Details</h3>
+@if(medicine == null)
+{
+    <p>Loading . . .</p>
+}
+{
+    <MudGrid>
+        <MudItem xs="6">
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Medicine Name: </MudPaper>
+            </MudItem>
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@medicine.Name</MudPaper>
+            </MudItem>
+        </MudItem>
+        <MudItem xs="6">
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Medicine Schedule: </MudPaper>
+            </MudItem>
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@medicine.Schedule.Description</MudPaper>
+            </MudItem>
+        </MudItem>
+        <MudItem xs="6">
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Dosage form: </MudPaper>
+            </MudItem>
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@medicine.Dosage_Form.Description</MudPaper>
+            </MudItem>
+        </MudItem>
+        <MudItem xs="6">
+            <MudItem xs="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Active Ingredients:  </MudPaper>
+            </MudItem>
+            <MudItem xs="6">
+               @* @if(medicine.Med_Ingredients.Count == 0)
+                {
+
+                }
+                else
+                {
+                    @foreach (var i in medicine.Med_Ingredients)
+                    {
+
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@i.Ingredient.Description</MudPaper>
+
+                    }
+                }*@
+            </MudItem>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [Parameter]
+    public string? id { get; set; }
+
+    private Medicine medicine { get; set; }
+    ServiceResponse<Medicine> med {get; set;}
+
+    protected override async Task OnInitializedAsync()
+    {
+       med = await _service.GetMedicineAsync(Convert.ToInt32(id));
+        
+       medicine = med.Data;
+        
+
+    }
+}

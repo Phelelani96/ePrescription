@@ -15,6 +15,7 @@ namespace ePrescription.Data
          
         [Required]
         [Display(Name = "Contact Number")]
+        [Phone]
         public string ContactNo { get; set; } = string.Empty;
 
         [Required]
@@ -29,6 +30,7 @@ namespace ePrescription.Data
         public string? AddressLine2 { get; set; }
 
         [Required]
+        [Range(1, 100000000, ErrorMessage = "Please select Suburb")]
         public int SuburbID { get; set; }
 
         [Display(Name = "Pharmacist")]

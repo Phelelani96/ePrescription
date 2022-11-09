@@ -19,7 +19,7 @@
                                                           @bind-Value="pharmacy.Email" For="@(() => pharmacy.Email)"/>
                                             <MudTextField Label="Contact Number"
                                                           @bind-Value="pharmacy.ContactNo" For="@(() => pharmacy.ContactNo)"/>
-                                            <MudTextField Label="Practice Number"
+                                            <MudTextField Label="Pharmacy Number"
                                                            @bind-Value="pharmacy.LicenceNo" For="@(() => pharmacy.LicenceNo)"/>
                                             <MudTextField Label="Address Line 1"
                                                            @bind-Value="pharmacy.AddressLine1" For="@(() => pharmacy.AddressLine1)"/>
@@ -40,6 +40,21 @@
                                                         }
                                                     }
                                             </MudSelect>
+                                            <MudSelect Label="Select Responsible pharmacist" @bind-Value="@pharmacy.PharmacistId" Placeholder="Please Select responsible pharmacist">
+                                                @if (pharmacists == null)
+                                                {
+
+                                                }
+                                                else
+                                                {
+                                                        @foreach (var s in pharmacists)
+                                                        {
+                                                        <MudSelectItem Value=s.Id>
+                                                            @s.FullName
+                                                        </MudSelectItem>
+                                                    }
+                                                }
+                                            </MudSelect>
                                         </MudCardContent>
                                         <MudCardActions>
                                             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
@@ -53,11 +68,15 @@
 @code {
     private Pharmacy pharmacy = new Pharmacy();
     private List<Suburb> Suburbs { get; set; }
+    private List<Areas.Identity.Data.User> pharmacists { get; set; }
     bool result = false;
 
     protected override async Task OnInitializedAsync()
     {
+
         Suburbs = await _service.GetSuburbsAsync();
+        pharmacists = await _service.GetPharmacists();
+        
     }
 
     private async Task Save()

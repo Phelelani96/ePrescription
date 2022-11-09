@@ -1,7 +1,321 @@
 ﻿@page "/prescriptions"
+@page "/prescriptions/{id}"
 
-<h3>Index</h3>
+@using Microsoft.AspNetCore.Identity
+@using ePrescription.Controllers
+@using ePrescription.Data
+@using ePrescription.Areas.Identity.Data
+@using ePrescription.Pages.Shared
+@using ePrescription.Services
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject PrescriptionsController _service
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+
+<h3>Prescriptions</h3>
+
+<AuthorizeView Roles="Doctor">
+    @if (doctorsprescriptions == null)
+    {
+        <p>Loading. . .</p>
+    }
+    else
+    {
+        <MudTable Items="@doctorsprescriptions" Context="ctx" Hover="true" Breakpoint="Breakpoint.Sm">
+	        <ColGroup>
+		        <col style="width:300px;" />
+		        <col style="width:100px;" />
+		        <col />
+		        <col style="width:100px;" />
+	        </ColGroup>
+	        <HeaderContent>
+		
+                    <MudTh>Date</MudTh>
+                    <MudTh>Patient</MudTh>
+	        </HeaderContent>
+	        <RowTemplate>
+		
+                    <MudTd DataLabel="Date">@ctx.Date</MudTd>
+                    <MudTd DataLabel="Patient">@ctx.Patient.FullName</MudTd>
+	        </RowTemplate>
+	        <ChildRowContent >
+              <MudTr>
+               <td colspan="4">
+	            <MudCard Elevation="0">
+	             <MudCardHeader>
+	              <CardHeaderContent>
+	               <MudText Typo="Typo.body1">Medication Details</MudText>
+	              </CardHeaderContent>
+	             </MudCardHeader>
+	             <MudCardContent Class="pa-0">
+                            <MudTable Items="@ctx.Prescription_Details" Context="Prescription_DetailContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+	               <ColGroup>
+		            <col />
+		            <col />
+		            <col style="width:200px;" />
+	               </ColGroup>
+	               <HeaderContent>
+		            <MudTh>Medication</MudTh>
+		            <MudTh>Repeats</MudTh>
+		            <MudTh>Quantity</MudTh>
+                    <MudTh>Repeats Left</MudTh>
+		            <MudTh>Instructions</MudTh>
+	               </HeaderContent>
+	               <RowTemplate Context="Prescription_DetailContext">
+		            <MudTd DataLabel="Medication">@Prescription_DetailContext.Medicine.Name</MudTd>
+                    <MudTd DataLabel="Repeats">@Prescription_DetailContext.Repetition</MudTd>
+                    <MudTd DataLabel="Quantity">@Prescription_DetailContext.Quantity</MudTd>
+                    <MudTd DataLabel="Repeats Left">@Prescription_DetailContext.RepetitionLeft</MudTd>
+		            <MudTd DataLabel="Instructions">@Prescription_DetailContext.Instructions</MudTd>
+	               </RowTemplate>
+	              </MudTable>
+	             </MudCardContent>
+	            </MudCard>
+               </td>
+              </MudTr>
+	</ChildRowContent>
+</MudTable>
+    }
+    
+
+
+     
+</AuthorizeView>
+<AuthorizeView Roles="Pharmacist">
+    @if (pharmacistsprescriptions == null)
+    {
+        <p>Loading. . .</p>
+    }
+    else
+    {
+        <MudTable Items="@pharmacistsprescriptions" Context="ctx" Hover="true" Breakpoint="Breakpoint.Sm">
+           
+            <HeaderContent>
+
+                <MudTh>Date</MudTh>
+                <MudTh>Patient</MudTh>
+                <MudTh>Doctor</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Date">@ctx.Date</MudTd>
+                <MudTd DataLabel="Patient">@ctx.Patient.FullName</MudTd>
+                <MudTd DataLabel="Patient">@ctx.Doctor.FullName</MudTd>
+
+            </RowTemplate>
+            <ChildRowContent>
+                <MudTr>
+                    <td colspan="4">
+                        <MudCard Elevation="0">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.body1">Medication Details</MudText>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent Class="pa-0">
+                                <MudTable Items="@ctx.Prescription_Details" Context="Prescription_DetailContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                                    <ColGroup>
+                                        <col />
+                                        <col />
+                                        <col style="width:200px;" />
+                                    </ColGroup>
+                                    <HeaderContent>
+                                        <MudTh>Medication</MudTh>
+                                        <MudTh>Repeats</MudTh>
+                                        <MudTh>Quantity</MudTh>
+                                        <MudTh>Repeats Left</MudTh>
+                                        <MudTh>Instructions</MudTh>
+                                        <MudTh></MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate Context="Prescription_DetailContext">
+                                        <MudTd DataLabel="Medication">@Prescription_DetailContext.Medicine.Name</MudTd>
+                                        <MudTd DataLabel="Repeats">@Prescription_DetailContext.Repetition</MudTd>
+                                        <MudTd DataLabel="Quantity">@Prescription_DetailContext.Quantity</MudTd>
+                                        <MudTd DataLabel="Repeats Left">@Prescription_DetailContext.RepetitionLeft</MudTd>
+                                        <MudTd DataLabel="Instructions">@Prescription_DetailContext.Instructions</MudTd>
+                                        <MudTh>
+                                            @if (@Prescription_DetailContext.RepetitionLeft > 0)
+                                            {
+                                                <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick="@((e) => DispenseMedicine(@Prescription_DetailContext.Id))">Dispense</MudButton>
+                                            }
+                                            else
+                                            {
+                                                <MudButton Variant="Variant.Filled" Color="Color.Surface" Disabled>Dispense</MudButton>
+                                            }
+                                        </MudTh>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudCardContent>
+                        </MudCard>
+                    </td>
+                </MudTr>
+            </ChildRowContent>
+        </MudTable>
+    }
+</AuthorizeView>
+<AuthorizeView Roles="Patient">
+    @if (patientsprescriptions == null)
+    {
+        <p>Loading. . .</p>
+    }
+    else
+    {
+        <MudTable Items="@patientsprescriptions" Context="ctx" Hover="true" Breakpoint="Breakpoint.Sm">
+            <ColGroup>
+                <col style="width:300px;" />
+                <col style="width:100px;" />
+                <col />
+                <col style="width:100px;" />
+            </ColGroup>
+            <HeaderContent>
+
+                <MudTh>Date</MudTh>
+                <MudTh>Doctor</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+
+                <MudTd DataLabel="Date">@ctx.Date</MudTd>
+                <MudTd DataLabel="Patient">@ctx.Doctor.FullName</MudTd>
+            </RowTemplate>
+            <ChildRowContent>
+                <MudTr>
+                    <td colspan="4">
+                        <MudCard Elevation="0">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.body1">Medication Details</MudText>
+                                </CardHeaderContent>
+                            </MudCardHeader>
+                            <MudCardContent Class="pa-0">
+                                <MudTable Items="@ctx.Prescription_Details" Context="Prescription_DetailContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                                    <ColGroup>
+                                        <col />
+                                        <col />
+                                        <col style="width:200px;" />
+                                    </ColGroup>
+                                    <HeaderContent>
+                                        <MudTh>Medication</MudTh>
+                                        <MudTh>Repeats</MudTh>
+                                        <MudTh>Quantity</MudTh>
+                                        <MudTh>Repeats Left</MudTh>
+                                        <MudTh>Instructions</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate Context="Prescription_DetailContext">
+                                        <MudTd DataLabel="Medication">@Prescription_DetailContext.Medicine.Name</MudTd>
+                                        <MudTd DataLabel="Repeats">@Prescription_DetailContext.Repetition</MudTd>
+                                        <MudTd DataLabel="Quantity">@Prescription_DetailContext.Quantity</MudTd>
+                                        <MudTd DataLabel="Repeats Left">@Prescription_DetailContext.RepetitionLeft</MudTd>
+                                        <MudTd DataLabel="Instructions">@Prescription_DetailContext.Instructions</MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </MudCardContent>
+                        </MudCard>
+                    </td>
+                </MudTr>
+            </ChildRowContent>
+        </MudTable>
+    }
+</AuthorizeView>
 
 @code {
+    [Parameter]
+    public string? id { get; set; }
+    private string? searchString1;
+    private List<Data.Prescription> doctorsprescriptions { get; set; }
+    private List<Data.Prescription> patientsprescriptions { get; set; }
+    private List<Data.Prescription> pharmacistsprescriptions { get; set; }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        doctorsprescriptions = await _service.DoctorIndex(id != null ? id : "" );
+        patientsprescriptions = await _service.PatientIndex(id != null ? id : "");
+        pharmacistsprescriptions = await _service.PharmacistIndex(id != null ? id : "");
+    }
+    private void ShowBtnPress(int nr)
+    {
+        Prescription tmpPerson = doctorsprescriptions.First(f => f.Id == nr);
+        //tmpPerson.ShowDetails = !tmpPerson.ShowDetails;
+    }
+
+    private async Task DispenseMedicine(int did)
+    {
+        var response = new ServiceResponse<bool>();
+        if(did != null)
+        {
+            response = await _service.DispenseAsync(did);
+        }
+
+        if(response.Success)
+        {
+            _snackbar.Add(response.Message,MudBlazor.Severity.Success);
+            pharmacistsprescriptions = await _service.PharmacistIndex(id != null ? id : "");
+        }
+        else
+        {
+            _snackbar.Add(response.Message, MudBlazor.Severity.Warning);
+        }
+    }
+    //private bool FilterFunc1(Medicine med) => FilterFunc(med, searchString1);
+
+    //private bool FilterFunc(Medicine med, string searchString)
+    //{
+    //    if (string.IsNullOrWhiteSpace(searchString))
+    //        return true;
+    //    if (med.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+    //        return true;
+    //    //if (user.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+    //    //    return true;
+    //    //if (user.IDNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+    //    //    return true;
+    //    return false;
+    //}
+    //private async Task DeletePractice(int? id)
+    //{
+    //    var x = new ServiceResponse<bool>();
+
+    //    if (id != null)
+    //    {
+    //        var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
+    //        if (p != null)
+    //        {
+    //            var parameters = new DialogParameters();
+    //            parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
+    //            parameters.Add("ButtonText", "Delete");
+    //            parameters.Add("Color", Color.Error);
+
+    //            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+    //            var dialog = DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+    //            var result = await dialog.Result;
+
+    //            if (!result.Cancelled)
+    //            {
+    //                x = await _service.DeletePracticeAsync(p.Data.Id);
+    //                if (x.Success == true)
+    //                {
+    //                    _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
+    //                    await PracticeList();
+    //                }
+    //                else
+    //                {
+    //                    _snackbar.Add(p.Message, Severity.Warning);
+    //                }
+        //            }
+
+    //        }
+    //    }
+
+    //}
+
+    //private async Task HistoryList()
+    //{
+    //    var P = await _service.GetHistory(id);
+
+    //    history = P.Data;
+    //}
 }

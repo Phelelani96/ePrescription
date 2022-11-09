@@ -1,0 +1,176 @@
+﻿@page "/prescriptioninformation/create/{id:int}"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using ePrescription.Areas.Identity.Data
+@using ePrescription.Controllers
+@using ePrescription.Data.Viewmodels
+@using System.ComponentModel.DataAnnotations
+@using ePrescription.Shared
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inject SignInManager<User> _signIn
+@inject UserManager<User> _user
+@inject PrescriptionsController _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+<h3>Create Prescription</h3>
+
+<EditForm Model="@inputModel" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator/>
+        <MudGrid>
+             <MudItem xs="12" sm="12">
+                   <MudCard>
+                          <MudCardContent>
+                              <MudItem xs="4">
+                                     <MudSelect T="int" Label="Select Medicine" @bind-Value="@inputModel.MedicineId" For="@(() => inputModel.MedicineId)">
+                                        @if (medicines == null)
+                                        {
+
+                                        }
+                                        else
+                                        {
+                                            @foreach (var d in medicines)
+                                            {
+                                                <MudSelectItem T="int" Value="d.Id">
+                                                    @d.Name
+                                                </MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect>
+                              </MudItem>
+                              <MudItem xs="2">
+                                    <MudTextField Label="Repeats"
+                                      @bind-Value="inputModel.Repetition" For="@(() => inputModel.Repetition)" />
+                              </MudItem>
+                                <MudItem xs="2">
+                                        <MudTextField Label="Quantity"
+                                      @bind-Value="inputModel.Quantity" For="@(() => inputModel.Quantity)" />
+                                </MudItem>
+                              <MudItem xs="4">
+                        
+                               <MudTextField Label="Instructions" Variant="Variant.Text"
+                                      @bind-Value="inputModel.Instructions" For="@(() => inputModel.Instructions)" Lines="5" />
+                             </MudItem>
+
+
+                          @*  <MudItem xs="4">
+                                <MudSelect T="int" Label="Select Dosage" @bind-Value="@details.prescription_Detail2.MedicineId" For="@(() => details.prescription_Detail2.MedicineId)">
+                                    @if (medicines == null)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        @foreach (var d in medicines)
+                                        {
+                                            <MudSelectItem T="int" Value="d.Id">
+                                                @d.Name
+                                            </MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudTextField Label="Repeats"
+                                      @bind-Value="details.prescription_Detail2.Repetition" For="@(() => details.prescription_Detail2.Repetition)" />
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudTextField Label="Quantity"
+                                              @bind-Value="details.prescription_Detail2.Quantity" For="@(() => details.prescription_Detail2.Quantity)" />
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudTextField Label="Instructions"
+                                              @bind-Value="details.prescription_Detail2.Instructions" For="@(() => details.prescription_Detail2.Instructions)" />
+                            </MudItem>*@
+
+
+                     @*       <MudItem xs="4">
+                        <MudSelect T="int" Label="Select Dosage" @bind-Value="@details.prescription_Detail3.MedicineId" For="@(() => details.prescription_Detail3.MedicineId)">
+                                    @if (medicines == null)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        @foreach (var d in medicines)
+                                        {
+                                            <MudSelectItem T="int" Value="d.Id">
+                                                @d.Name
+                                            </MudSelectItem>
+                                        }
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudTextField Label="Repeats"
+                                      @bind-Value="details.prescription_Detail3.Repetition" For="@(() => details.prescription_Detail3.Repetition)" />
+                            </MudItem>
+                            <MudItem xs="2">
+                                <MudTextField Label="Quantity"
+                                      @bind-Value="details.prescription_Detail3.Quantity" For="@(() => details.prescription_Detail3.Quantity)" />
+                            </MudItem>
+                            <MudItem xs="4">
+                                <MudTextField Label="Instructions"
+                                      @bind-Value="details.prescription_Detail3.Instructions" For="@(() => details.prescription_Detail3.Instructions)" />
+                            </MudItem>
+                          *@
+                          </MudCardContent>
+                          <MudCardActions>
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                          </MudCardActions>
+                   </MudCard>
+             </MudItem>
+        </MudGrid>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+    private List<Medicine> medicines { get; set; } = new List<Medicine>();
+    Data.Prescription_Details inputModel = new Data.Prescription_Details();
+    private InputModel details = new InputModel();
+    int n;
+    protected override async Task OnInitializedAsync()
+    {
+
+        medicines = await _service.GetMedicine();
+        inputModel = new Data.Prescription_Details();
+        //inputModel.PatientId = id;
+        //inputModel.Date = System.DateTime.Today;
+        //inputModel.DoctorId = _user.GetUserId(System.Security.Claims.ClaimsPrincipal.Current);
+        //var x = await _service.Create(inputModel);
+        //if(x.Success)
+        //{
+        //    n = Convert.ToInt32(x.Message);
+        //    //_nav.NavigateTo("/prescription/details/create/"+n);
+        //}
+
+    }
+
+    public class InputModel
+    {
+        public Prescription_Details? prescription_Detail1 { get; set; }
+        public Prescription_Details? prescription_Detail2 { get; set; }
+        public Prescription_Details? prescription_Detail3 { get; set; }
+    }
+
+    private async void OnValidSubmit()
+    {
+        inputModel.PrescriptionId = Convert.ToInt32(id);
+        inputModel.RepetitionLeft = inputModel.Repetition;
+        var response = await _service.AddDetails(inputModel);
+        if(response.Success == true)
+        {
+            _snackbar.Add("Added details successfully. Please select another medicine to prescribe or view prescription.",Severity.Success);
+            
+            
+            await OnInitializedAsync();
+        }
+        else
+        {
+            _snackbar.Add("Failed to add prescription.If this persist, contact your system admininstrator", Severity.Warning);
+        }
+        
+    }
+}

@@ -11,7 +11,7 @@
 }
 else
 {
-    <MudTable Items="@pharmacies" Hover="true" >
+    <MudTable Items="@pharmacies" Hover="true" Filter="new Func<Pharmacy,bool>(FilterFunc1)">
         <ToolBarContent>
            <MudButton Variant = "Variant.Filled" Color="Color.Info" Href="/pharmacy/add">Add Practice</MudButton>
             <MudSpacer />
@@ -32,7 +32,7 @@ else
             <MudTd DataLabel="ContactNo">@context.ContactNo</MudTd>
             <MudTd DataLabel="AddressLine1">@context.AddressLine1</MudTd>
             <MudTd DataLabel="AddressLine2">@context.AddressLine2</MudTd>
-            <MudTd DataLabel="SuburbId">@context.SuburbID</MudTd>
+            <MudTd DataLabel="SuburbId">@context.Suburb.Name</MudTd>
             <MudTd>
                 <a class="btn btn-primary btn-sm" href="/pharmacy/edit/@context.Id">Update</a>
                @* <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))">Delete</MudButton>*@
@@ -54,4 +54,20 @@ else
     {
         pharmacies = await _service.GetPharmaciesAsync();
     }
+
+    private bool FilterFunc1(Pharmacy pharmacy) => FilterFunc(pharmacy, searchString1);
+
+    private bool FilterFunc(Pharmacy pharmacy, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (pharmacy.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (pharmacy.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (user.IDNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        return false;
+    }
+
 }

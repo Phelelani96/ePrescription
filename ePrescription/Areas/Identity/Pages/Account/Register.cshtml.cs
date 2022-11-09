@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace ePrescription.Areas.Identity.Pages.Account
 {
@@ -30,6 +33,7 @@ namespace ePrescription.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<User> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
         //private readonly RoleManager<User> _roleManager;
 
         public RegisterModel(
@@ -37,7 +41,7 @@ namespace ePrescription.Areas.Identity.Pages.Account
             IUserStore<User> userStore,
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -45,7 +49,7 @@ namespace ePrescription.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-           // _roleManager = roleManager;
+            _context = context;
         }
 
         /// <summary>
@@ -97,6 +101,13 @@ namespace ePrescription.Areas.Identity.Pages.Account
             [Display(Name = "Address Line 1")]
             public string AddressLine1 { get; set; }
 
+            [Required]
+            [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "Invalid phone number entered")]
+            [StringLength(10, ErrorMessage = "{0} must be 10 characters", MinimumLength = 10)]
+            [DisplayName("Phone Number")]
+            [Phone]
+            public string PhoneNumber { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -112,6 +123,7 @@ namespace ePrescription.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "Suburb")]
+            [Range(1, 100000000, ErrorMessage = "Please select Suburb")]
             public int SuburbID { get; set; }
 
 
@@ -134,6 +146,7 @@ namespace ePrescription.Areas.Identity.Pages.Account
             
             [Required]
             [Display(Name = "ID Number")]
+            [MaxLength(13)]
             public string IDNumber { get; set; }
 
             /// <summary>
@@ -163,6 +176,8 @@ namespace ePrescription.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //ViewBag.SuburbId = new SelectList(_context.Suburb, "Id", "Name");
+            ViewData["SuburbId"] = new SelectList(_context.Suburb, "Id", "Name");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -183,6 +198,8 @@ namespace ePrescription.Areas.Identity.Pages.Account
                 user.SuburbID = Input.SuburbID;
                 user.Status = "Active";
                 user.Discriminator = "Patient";
+                user.PhoneNumber = Input.PhoneNumber;
+                //user.DOB = 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -217,8 +234,9 @@ namespace ePrescription.Areas.Identity.Pages.Account
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                ViewData["SuburbId"] = new SelectList(_context.Suburb, "Id", "Name", user.SuburbID);
             }
-
+            ViewData["SuburbId"] = new SelectList(_context.Suburb, "Id", "Name" );
             // If we got this far, something failed, redisplay form
             return Page();
         }

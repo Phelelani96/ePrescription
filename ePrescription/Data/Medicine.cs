@@ -1,12 +1,17 @@
-﻿namespace ePrescription.Data
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ePrescription.Data
 {
     public class Medicine
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; } = string.Empty;
 
+        [Range(1, 100000000, ErrorMessage = "Please select Condition")]
         public int Dosage_FormId { get; set; }
         public string MedSizeId { get; set; } = string.Empty;
+        [Range(1, 100000000, ErrorMessage = "Please select Condition")]
         public int ScheduleId { get; set; }
 
         //Navigation properties//
