@@ -1,4 +1,11 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Identity
+@using ePrescription.Areas.Identity.Data
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ePrescription</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -6,56 +13,242 @@
         </button>
     </div>
 </div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="conditions">
-                <span class="oi oi-plus" aria-hidden="true"></span> Conditions
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="doctors">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Doctors
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="medication">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Medication
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="conditions">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Conditions
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="doctors">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Doctors
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ingredients">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Ingredients
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="medication">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Medication
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="interactions">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Medication Interaction
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="contra-indications">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Contra Indications
+                </NavLink>
+            </div>
+            @* <div class="nav-item px-3">
             <NavLink class="nav-link" href="patients">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Patients
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Patients
             </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pharmacists">
+            </div>*@
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="pharmacists">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Pharmacists
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="pharmacies">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Pharmacies
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="practices">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Practices
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="prescriptions">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Prescription
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+    </Authorized>
+    
+</AuthorizeView>
+<AuthorizeView Roles="Doctor">
+    <Authorized>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <nav class="flex-column">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+                @* <div class="nav-item px-3">
+                <NavLink class="nav-link" href="conditions">
+                <span class="oi oi-plus" aria-hidden="true"></span> Conditions
+                </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                <NavLink class="nav-link" href="doctors">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Doctors
+                </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                <NavLink class="nav-link" href="ingredients">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Ingredients
+                </NavLink>
+                </div>*@
+                @*<div class="nav-item px-3">
+                <NavLink class="nav-link" href="medication">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Medication
+                </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                <NavLink class="nav-link" href="interactions">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Medication Interaction
+                </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                <NavLink class="nav-link" href="contra-indications">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Contra Indications
+                </NavLink>
+                </div>*@
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="patients">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Patients
+                    </NavLink>
+                </div>
+                @*  <div class="nav-item px-3">
+                <NavLink class="nav-link" href="pharmacists">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Pharmacists
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="pharmacies">
+                </NavLink>
+                </div>*@
+                @*    <div class="nav-item px-3">
+                <NavLink class="nav-link" href="pharmacies">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Pharmacies
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="practices">
+                </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                <NavLink class="nav-link" href="practices">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Practices
-            </NavLink>
+                </NavLink>
+                </div>*@
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="prescriptions">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> Prescription
+                    </NavLink>
+                </div>
+            </nav>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="prescriptions">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Prescription
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView Roles="Pharmacist">
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            @* <div class="nav-item px-3">
+            <NavLink class="nav-link" href="conditions">
+            <span class="oi oi-plus" aria-hidden="true"></span> Conditions
             </NavLink>
-        </div>
-    </nav>
-</div>
+            </div>
+            <div class="nav-item px-3">
+            <NavLink class="nav-link" href="doctors">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Doctors
+            </NavLink>
+            </div>
+            <div class="nav-item px-3">
+            <NavLink class="nav-link" href="ingredients">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Ingredients
+            </NavLink>
+            </div>*@
+            @*<div class="nav-item px-3">
+            <NavLink class="nav-link" href="medication">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Medication
+            </NavLink>
+            </div>
+            <div class="nav-item px-3">
+            <NavLink class="nav-link" href="interactions">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Medication Interaction
+            </NavLink>
+            </div>
+            <div class="nav-item px-3">
+            <NavLink class="nav-link" href="contra-indications">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Contra Indications
+            </NavLink>
+            </div>*@
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="patients">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Patients
+                </NavLink>
+            </div>
+            @*  <div class="nav-item px-3">
+            <NavLink class="nav-link" href="pharmacists">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Pharmacists
+            </NavLink>
+            </div>*@
+            @*    <div class="nav-item px-3">
+            <NavLink class="nav-link" href="pharmacies">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Pharmacies
+            </NavLink>
+            </div>
+            <div class="nav-item px-3">
+            <NavLink class="nav-link" href="practices">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Practices
+            </NavLink>
+            </div>*@
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="prescriptions">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Prescription
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+</AuthorizeView>
+<AuthorizeView Roles="Patient">
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="prescriptions">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Allergies
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="prescriptions">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Chronic Medication
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/patient-history">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Medical History
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="prescriptions">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> Prescription
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+</AuthorizeView>
+
+
 
 @code {
     private bool collapseNavMenu = true;

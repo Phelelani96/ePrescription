@@ -1,6 +1,144 @@
-﻿@page "/medical-history"
-<h3>Index</h3>
+﻿@page "/medical-history/{id}"
+@page "/patient-history"
+@using Microsoft.AspNetCore.Identity
+@using ePrescription.Controllers
+@using ePrescription.Data
+@using ePrescription.Areas.Identity.Data
+@using ePrescription.Pages.Shared
+@using ePrescription.Services
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject MedicalHistoryService _service
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+
+<h3>Diagnosis History</h3>
+@if (history == null)
+{
+    <p>Loading . . .</p>
+}
+else
+{
+    <MudTable Items="@history" Hover="true">
+        <ToolBarContent>
+           @* <MudButton Variant="Variant.Filled" Color="Color.Info" Href="/medication/create"></MudButton>*@
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Diagnosis</MudTh>
+            <MudTh>Date Diagnosed</MudTh>
+            <MudTh>Chronic Medication</MudTh>
+          @*  <MudTh>Options</MudTh>*@
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Diagnosis">@context.Diagnosis.Description</MudTd>
+            <MudTd DataLabel="DiagnosisDate">@context.DiagnosisDate</MudTd>
+            <MudTd DataLabel="Medication">
+                @if(context.History != null)
+                {
+                    @foreach(var m in context.History)
+                    {
+                        <p>@m.Medicine.Name</p>
+                    }
+                }
+            </MudTd>
+           @* <MudTd>
+
+                <a class="btn btn-primary btn-sm" href="/medication/update/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+               @* <a class="btn btn-primary btn-sm" href="/medication/details/@context.Id"><span class="oi oi-preview" aria-hidden="true"></span></a>*@
+               
+           @* </MudTd>*@
+
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
+
 
 @code {
+    [Parameter]
+    public string? id { get; set; }
+    private string? searchString1;
+    private List<Data.Medical_History> history { get; set; }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(id == null)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            id = UserManager.GetUserId(user);
+        }
+        
+        var P = await _service.GetHistory(id);
+
+        history = P.Data;
+    }
+
+    //private bool FilterFunc1(Medicine med) => FilterFunc(med, searchString1);
+
+    //private bool FilterFunc(Medicine med, string searchString)
+    //{
+    //    if (string.IsNullOrWhiteSpace(searchString))
+    //        return true;
+    //    if (med.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+    //        return true;
+    //    //if (user.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+    //    //    return true;
+    //    //if (user.IDNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+    //    //    return true;
+    //    return false;
+    //}
+    //private async Task DeletePractice(int? id)
+    //{
+    //    var x = new ServiceResponse<bool>();
+
+    //    if (id != null)
+    //    {
+    //        var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
+    //        if (p != null)
+    //        {
+    //            var parameters = new DialogParameters();
+    //            parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
+    //            parameters.Add("ButtonText", "Delete");
+    //            parameters.Add("Color", Color.Error);
+
+    //            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+    //            var dialog = DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+    //            var result = await dialog.Result;
+
+    //            if (!result.Cancelled)
+    //            {
+    //                x = await _service.DeletePracticeAsync(p.Data.Id);
+    //                if (x.Success == true)
+    //                {
+    //                    _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
+    //                    await PracticeList();
+    //                }
+    //                else
+    //                {
+    //                    _snackbar.Add(p.Message, Severity.Warning);
+    //                }
+    //            }
+
+    //        }
+    //    }
+
+    //}
+
+    //private async Task HistoryList()
+    //{
+    //    var P = await _service.GetHistory(id);
+
+    //    history = P.Data;
+    //}
 }

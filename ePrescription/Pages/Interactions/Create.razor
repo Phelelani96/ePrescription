@@ -1,0 +1,139 @@
+﻿@page "/interactions/create"
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Controllers
+@using System.ComponentModel.DataAnnotations
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inject InteractionsController _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+
+<h3>Add Medication Interaction</h3>
+
+
+<EditForm Model="@interaction" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12">
+            <MudCard>
+                <MudCardContent>
+                    @*<MudItem xs="6" Class="d-flex align-center justify-center mud-width-full py-8">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">*@
+                    <MudSelect T="int" Label="Select Ingredient 1" @bind-Value="@interaction.Ingredient1Id" Placeholder="Please Select Practice" For="@(() => @interaction.Ingredient1Id)">
+                        @if (ingredients == null)
+                                {
+
+                                }
+                                else
+                                {
+                            @foreach (var s in ingredients)
+                                    {
+                                        <MudSelectItem T="int" Value="s.Id">@s.Description</MudSelectItem>
+
+                                    }
+                                }
+                            </MudSelect>
+                        @*</MudPaper>
+                    </MudItem>*@
+                   @* <MudItem xs="6"  Class="d-flex align-center justify-center mud-width-full py-8">
+                        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">*@
+                    <MudSelect T="int" Label="Select Ingredient 2" @bind-Value="@interaction.Ingredient2Id" Placeholder="Please Select Practice" For="@(() => interaction.Ingredient2Id)">
+                        @if (ingredients == null)
+                                {
+
+                                }
+                                else
+                                {
+                            @foreach (var s in ingredients)
+                                    {
+                                        <MudSelectItem T="int" Value="s.Id">@s.Description</MudSelectItem>
+
+                                    }
+                                }
+                            </MudSelect>
+                       @* </MudPaper>
+                    </MudItem>*@
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                </MudCardActions>
+            </MudCard>
+            @*<MudItem xs="12" sm="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+                    <MudSelect T="int" Label="Select Medication 1" @bind-Value="@interaction.Medicine1Id" Placeholder="Please Select Practice" For="@(() => @interaction.Medicine1Id)">
+                        @if (medication == null)
+                        {
+
+                        }
+                        else
+                        {
+                            @foreach (var s in medication)
+                            {
+                                <MudSelectItem T="int" Value="s.Id">@s.Name: @s.Name</MudSelectItem>
+
+                            }
+                        }
+                    </MudSelect>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+                    <MudSelect T="int" Label="Select Medication 2" @bind-Value="@interaction.Medicine2Id" Placeholder="Please Select Practice" For="@(() => interaction.Medicine2Id)">
+                        @if (medication == null)
+                        {
+
+                        }
+                        else
+                        {
+                            @foreach (var s in medication)
+                            {
+                                <MudSelectItem T="int" Value="s.Id">@s.Name: @s.Name</MudSelectItem>
+
+                            }
+                        }
+                    </MudSelect>
+                </MudPaper>
+            </MudItem>
+            <MudCard>
+
+                @*<MudCardContent>
+                    
+                    
+                </MudCardContent>*@
+               @* @*<MudCardActions>
+                   
+                </MudCardActions>*@
+            @*</MudCard>*@
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+
+
+@code {
+
+    private Data.Interaction interaction = new Data.Interaction();
+    private List<Data.Ingredients> ingredients { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ingredients = await _service.GetMedicinesAsync();
+    }
+
+
+    private async void OnValidSubmit()
+    {
+
+        var x = await _service.Create(interaction);
+        if (x.Success == true)
+        {
+            _snackbar.Add(x.Message, Severity.Success);
+            _nav.NavigateTo("/interactions");
+        }
+        else
+        {
+            _snackbar.Add(x.Message, Severity.Warning);
+        }
+    }
+}
+

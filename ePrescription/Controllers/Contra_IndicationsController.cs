@@ -1,14 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ePrescription.Shared;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Controllers
 {
     public class Contra_IndicationsController : Controller
     {
-        // GET: Contra_IndicationsController
-        public ActionResult Index()
+        private readonly ApplicationDbContext _context;
+        public Contra_IndicationsController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+        // GET: Contra_IndicationsController
+        public async Task<List<Contra_Indication>> Index()
+        {
+            return await _context.Contra_Indications
+                .Include(c => c.Ingredient)
+                .Include(c => c.Diagnosis)
+                .ToListAsync();
         }
 
         // GET: Contra_IndicationsController/Details/5
@@ -18,23 +28,42 @@ namespace ePrescription.Controllers
         }
 
         // GET: Contra_IndicationsController/Create
-        public ActionResult Create()
+        public async Task<List<Ingredients>> GetIngredients()
         {
-            return View();
+            return await _context.Ingredients.ToListAsync();
+        }
+        public async Task<List<Diagnosis>> GetDiagnoses()
+        {
+            return await _context.Diagnosis.ToListAsync();
         }
 
         // POST: Contra_IndicationsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ServiceResponse<bool>> Create(Contra_Indication contra)
         {
+            var response = new ServiceResponse<bool>();
             try
             {
-                return RedirectToAction(nameof(Index));
+                if(await exists(contra.IngredientId, contra.DiagnosisId))
+                {
+                    response.Data = false;
+                    response.Message = "Failed to add record. Record already exists";
+                    response.Success = false;
+                    return response;
+                }
+                _context.Add(contra);
+                await _context.SaveChangesAsync();
+                response.Data = true;
+                response.Message = "Record successfully added!";
+                return response;
             }
             catch
             {
-                return View();
+                response.Data = false;
+                response.Message = "Failed to add record. If this persists, contact your system administrator.";
+                response.Success = false;
+                return response;
             }
         }
 
@@ -78,6 +107,20 @@ namespace ePrescription.Controllers
             {
                 return View();
             }
+        }
+
+        public async Task<bool> exists(int medId, int diagId)
+        {
+            bool x;
+            if(_context.Contra_Indications.Any(c => c.DiagnosisId == diagId && c.IngredientId == medId))
+            {
+                x = true;
+            }
+            else
+            {
+                x = false;
+            }
+            return x;
         }
     }
 }

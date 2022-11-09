@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ePrescription.Areas.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ePrescription.Services
 {
@@ -15,7 +16,7 @@ namespace ePrescription.Services
         {
             try
             {
-                return await _context.Pharmacy.ToListAsync();
+                return await _context.Pharmacy.Include(p => p.Suburb).ToListAsync();
             }
             catch (Exception)
             {
@@ -126,6 +127,10 @@ namespace ePrescription.Services
         public async Task<List<Suburb>> GetSuburbsAsync()
         {
             return await _context.Suburb.ToListAsync();
+        }
+        public async Task<List<User>> GetPharmacists()
+        {
+            return await _context.Users.Where(u => u.Discriminator == "Pharmacist" && u.Status == "Active").ToListAsync();
         }
     }
 }

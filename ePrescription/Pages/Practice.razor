@@ -13,7 +13,7 @@
 }
 else
 {
-    <MudTable Items="@practices" Hover="true" >
+    <MudTable Items="@practices" Hover="true" Filter="new Func<Data.Practice,bool>(FilterFunc1)">
     <ToolBarContent>
        <MudButton Variant = "Variant.Filled" Color="Color.Info" Href="/practice/new">Add Practice</MudButton>
         <MudSpacer />
@@ -34,11 +34,11 @@ else
         <MudTd DataLabel="ContactNo">@context.ContactNo</MudTd>
         <MudTd DataLabel="AddressLine1">@context.AddressLine1</MudTd>
         <MudTd DataLabel="AddressLine2">@context.AddressLine2</MudTd>
-        <MudTd DataLabel="SuburbId">@context.SuburbID</MudTd>
+        <MudTd DataLabel="SuburbId">@context.Suburb.Name</MudTd>
         <MudTd>
             
             <a class="btn btn-primary btn-sm" href="/practice/edit/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
-            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>
+            @*<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@((e) => DeletePractice(@context.Id))" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>*@
         </MudTd>
          
     </RowTemplate>
@@ -59,44 +59,58 @@ else
         await PracticeList();
     }
 
-    private async Task DeletePractice(int? id)
+    private bool FilterFunc1(Data.Practice practice) => FilterFunc(practice, searchString1);
+
+    private bool FilterFunc(Data.Practice practice, string searchString)
     {
-        var x = new ServiceResponse<bool>();
-        
-        if(id != null)
-        {
-            var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
-            if(p != null)
-            {
-                var parameters = new DialogParameters();
-                parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
-                parameters.Add("ButtonText", "Delete");
-                parameters.Add("Color", Color.Error);
-
-                var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-
-                var dialog =  DialogService.Show<DeleteDialog>("Delete", parameters, options);
-
-                var result = await dialog.Result;
-
-                if (!result.Cancelled)
-                {
-                    x = await _service.DeletePracticeAsync(p.Data.Id);
-                    if(x.Success == true)
-                    {
-                        _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
-                        await PracticeList();
-                    }
-                    else
-                    {
-                        _snackbar.Add(p.Message, Severity.Warning);
-                    }
-                }
-
-            }
-        }
-
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (practice.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (practice.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        //if (user.IDNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        return false;
     }
+    //private async Task DeletePractice(int? id)
+    //{
+    //    var x = new ServiceResponse<bool>();
+        
+    //    if(id != null)
+    //    {
+    //        var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
+    //        if(p != null)
+    //        {
+    //            var parameters = new DialogParameters();
+    //            parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
+    //            parameters.Add("ButtonText", "Delete");
+    //            parameters.Add("Color", Color.Error);
+
+    //            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+    //            var dialog =  DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+    //            var result = await dialog.Result;
+
+    //            if (!result.Cancelled)
+    //            {
+    //                x = await _service.DeletePracticeAsync(p.Data.Id);
+    //                if(x.Success == true)
+    //                {
+    //                    _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
+    //                    await PracticeList();
+    //                }
+    //                else
+    //                {
+    //                    _snackbar.Add(p.Message, Severity.Warning);
+    //                }
+    //            }
+
+    //        }
+    //    }
+
+    //}
 
     private async Task PracticeList()
     {

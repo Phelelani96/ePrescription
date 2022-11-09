@@ -1,11 +1,13 @@
 ﻿@page "/prescription/{PId}"
 @using Microsoft.AspNetCore.Identity
+@using ePrescription.Controllers
 @using ePrescription.Data
 @using ePrescription.Areas.Identity.Data
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
+@inject PrescriptionsController _service
+@inject NavigationManager _nav
 @inject SignInManager<User> _sign
 @inject UserManager<User> _userManager
 
@@ -14,7 +16,7 @@
 @code {
     [Parameter]
     public string? PId { get; set; }
-
+    int n;
     private Data.Prescription P = new Data.Prescription();
 
     protected override async Task OnInitializedAsync()
@@ -31,6 +33,12 @@
             P.Date = System.DateTime.Today;
             P.PatientId = PId;
             P.DoctorId = _userManager.GetUserId(user);
+            var x = await _service.Create(P);
+            if(x.Success)
+            {
+                n = Convert.ToInt32(x.Message);
+                _nav.NavigateTo("/prescriptioninformation/create/"+n);
+            }
         }
        
 

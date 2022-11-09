@@ -75,6 +75,7 @@
     {
         var p = await _service.GetPracticeAsync(Convert.ToInt32(PId));
         practice = p.Data;
+        Suburbs = await _service.GetSuburbsAsync();
     }
 
     private async void OnValidSubmit()

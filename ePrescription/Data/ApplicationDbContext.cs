@@ -580,6 +580,6 @@ namespace ePrescription.Data
         public DbSet<Severity> Severity { get; set; }
         public DbSet<Suburb> Suburb { get; set; }
         public DbSet<MedSize> Size { get; set; }
-        //public DbSet<> Entities { get; set; }
+        public DbSet<Interaction> Interactions { get; set; }
     }
 }

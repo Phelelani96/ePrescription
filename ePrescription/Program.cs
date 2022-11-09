@@ -40,8 +40,13 @@ builder.Services.AddScoped<DoctorsController>();
 builder.Services.AddScoped<PharmacistsController>();
 builder.Services.AddScoped<MedicinesController>();
 builder.Services.AddScoped<DiagnosesController>();
+builder.Services.AddScoped<IngredientsController>();
+builder.Services.AddScoped<InteractionsController>();
+builder.Services.AddScoped<PrescriptionsController>();
+builder.Services.AddScoped<Contra_IndicationsController>();
+builder.Services.AddScoped<Contra_IndicationsController>();
+builder.Services.AddScoped<MedicalHistoryService>();
 builder.Services.AddScoped<PharmacyService>();
-
 builder.Services.AddMudServices();
 var app = builder.Build();
 

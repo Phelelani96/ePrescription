@@ -1,0 +1,91 @@
+﻿@page "/patients/details/{Id}"
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Controllers
+@using ePrescription.Data.Viewmodels
+@using System.ComponentModel.DataAnnotations
+@using ePrescription.Shared
+@using ePrescription.Areas.Identity.Data
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inject PatientsController _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+<h3>Patient Details</h3>
+
+
+@if(patient == null)
+{
+    <p>Loading. . .</p>
+}
+else
+{
+    <MudGrid>
+        @*  <MudItem xs="12">
+    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=12</MudPaper>
+    </MudItem>*@
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Full Name: </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="9">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@patient.FullName</MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Address: </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="9">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+                @patient.AddressLine1
+                @patient.AddressLine2
+                @patient.Suburb.Name,
+                @patient.Suburb.PostalCode,
+                @patient.Suburb.City.Name
+                </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Contact: </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="9">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@patient.PhoneNumber</MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">Email: </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="9">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">@patient.Email</MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+               <a class="btn btn-primary" href="/allergies/create/@patient.Id">Add Allergy</a>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+                <a class="btn btn-primary" href="/medical-history/create/@patient.Id">Diagnose</a>
+                @*<MudButton Href="medical-history/create/" Variant="Variant.Filled" Color="Color.Info">Diagnose</MudButton>*@
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+                <a class="btn btn-primary" href="/prescription/@patient.Id">Create Prescription</a>
+               @* <MudButton Href="/prescriptions/create/{context.Id}" Variant="Variant.Filled" Color="Color.Info">Create Prescription</MudButton>*@
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+                <a class="btn btn-primary" href="/prescriptions/@patient.Id">Prescription History</a>
+                @* <MudButton Href="/prescriptions/create/{context.Id}" Variant="Variant.Filled" Color="Color.Info">Create Prescription</MudButton>*@
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+    private User patient { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        patient = await _service.GetPatientAsync(Id);
+    }
+}

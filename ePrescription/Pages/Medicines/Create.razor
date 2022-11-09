@@ -36,7 +36,7 @@
                                     }
                                 }
                             </MudSelect>
-                           <MudTextField Label="Name"
+                           <MudTextField Label="Medication size"
                                                     @bind-Value="medicine.MedSizeId" For="@(() => medicine.MedSizeId)" />
                            <MudSelect T="int" Label="Select Schedule" @bind-Value="@medicine.ScheduleId" For="@(() => medicine.ScheduleId)">
                                 @if (schedules == null)
@@ -53,6 +53,24 @@
                                     }
                                 }
                             </MudSelect>
+                            <MudGrid>
+                                @if (medicine.ActiveIngredients == null)
+                                {
+
+                                }
+                                else
+                                {
+                                    @foreach (var ai in medicine.ActiveIngredients)
+                                    {
+                                        <MudItem xs="4" sm="4">
+                                            <MudCheckBox @bind-Checked="@ai.IsChecked" Label="@ai.Name"></MudCheckBox>
+                                            <MudTextField Label="Strength"
+                                                  @bind-Value="ai.Strength" For="@(() => ai.Strength)" />
+                                        </MudItem>
+                                    }
+                                }
+                            </MudGrid>
+
                           @* <MudTextField Label="Name"
                                                     @bind-Value="medicine.Name" For="@(() => medicine.Name)" />*@
                           
@@ -75,33 +93,33 @@
     //var items { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        //items = await _service.GetIngredientsAsync();
-        //medicine.ActiveIngredients = items.Select(al => new CheckItem()
-        //    {
-        //        Id = al.Id,
-        //        Name = al.Description,
-        //        Strength = "",
-        //        IsChecked = false;
+        var items = await _service.GetIngredientsAsync();
+        medicine.ActiveIngredients = items.Select(al => new CheckItem()
+            {
+                Id = al.Id,
+                Name = al.Description,
+                Strength = "",
+                IsChecked = false
 
-        //}).ToList();;
-
-       dosages = await _service.GetDosagesAsync();
-       schedules = await _service.GetSchedulesAsync();
+        }).ToList();;
+        //var x = medicine.ActiveIngredients;
+        dosages = await _service.GetDosagesAsync();
+        schedules = await _service.GetSchedulesAsync();
     }
 
 
     private async void OnValidSubmit()
     {
-       
+        var response = await _service.Create(medicine);
         //var x = await _service.Create(condition);
-        //if(x.Success == true)
-        //{
-        //    _snackbar.Add(x.Message, Severity.Success);
-        //    _nav.NavigateTo("/conditions");
-        //}
-        //else
-        //{
-        //    _snackbar.Add(x.Message, Severity.Warning);
-        //}
+        if (response.Success == true)
+        {
+            _snackbar.Add(response.Message, Severity.Success);
+            _nav.NavigateTo("/medication");
+        }
+        else
+        {
+            _snackbar.Add(response.Message, Severity.Warning);
+        }
     }
 }

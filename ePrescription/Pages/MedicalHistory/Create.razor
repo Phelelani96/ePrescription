@@ -1,89 +1,83 @@
-﻿@page "/medical-history/add/{id}"
+﻿@page "/medical-history/create/{id}"
 @using ePrescription.Data
+@using ePrescription.Data.Viewmodels
 @using ePrescription.Services
 
 @inject IMedicalHistoryService _service
+@inject NavigationManager _nav
 @inject ISnackbar _snack
-<h3>Add</h3>
+<h3>Add Medication History</h3>
 
-<MudGrid>
-    <MudItem xs="12">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">Medical History for: Patient Name</MudPaper>
-    </MudItem>
-    <MudItem xs="6" Class="h-auto">
-        <MudPaper Class="d-block align-center justify-center mud-width-full py-2 px-md-8">
-            <EditForm Model="@history" OnSubmit="HandleSubmit">
-                @if(Diagnoses != null)
-                {
-                    <MudSelect T="int" Label="Disease" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" id = "Disease">
-                        @foreach(var d in Diagnoses)
-                        {
-                            <MudSelectItem Value="@d.Id"> @d.Description</MudSelectItem>
-                        }
-                    </MudSelect>
-                }
-            </EditForm>
-           
-            @if(medic != null)
-            {
-                <MudSelect T="Medicine" Label="Medication" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" MultiSelection = "true" @bind-SelectedValues="Medicines" MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
-                   @foreach(var med in medic)
+<EditForm Model="@history" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    @if (Diagnoses != null)
                     {
-                        <MudSelectItem T="Medicine" Value="@med">@med.Name</MudSelectItem>
+                        <MudSelect T="int" Label="Disease" @bind-Value="@history.DiagnosisId" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" id="Disease" For="@(() => history.DiagnosisId)">
+                            @foreach (var d in Diagnoses)
+                            {
+                                <MudSelectItem Value="@d.Id" T="int">@d.Description</MudSelectItem>
+                            }
+                        </MudSelect>
                     }
-                </MudSelect>
-            }
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="6" Class="h-auto">
-        <MudPaper Class="d-block align-center justify-center mud-width-full py-2 px-md-8">
-            @if(Medicines != null)
-            {
-                @foreach(var x in Medicines)
-                {
-                    <p>
-                        @x.Name
-                    </p>
-                }
-            }
-            
+                    <MudTextField T="DateTime" @bind-Value="@history.DiagnosisDate" Format="yyyy-MM-dd" Label="Date" InputType="InputType.Date" />
+                    @if (history.Medication != null)
+                    {
+                        @foreach (var med in history.Medication)
+                        {
+                            <MudItem xs="4" sm="4">
+                                <MudCheckBox @bind-Checked="@med.IsChecked" Label="@med.Name"></MudCheckBox>
+                            </MudItem>
+                        }
+                    }
+                
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
 
-        </MudPaper>
 
-    </MudItem>
-     <MudItem xs="12">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
-            <MudButton Variant = "Variant.Filled" Color = "Color.Info" ButtonType="ButtonType.Submit" >
-                Save
-            </MudButton>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
 
 @code {
     [Parameter]
     public string? id {get;set;}
 
-    private IEnumerable<Medicine> Medicines { get; set; } 
-    private List<Medicine> medic { get; set; }
-    private Medicine med { get; set; }
+    private List<Medicine> Medicines { get; set; } 
+    //private List<Medicine> medic { get; set; }
+    //private Medicine med { get; set; }
     private List<Diagnosis> Diagnoses { get; set; }
-    private Medical_History history = new Medical_History();
+    //private Medical_History history = new Medical_History();
+
+    private PatientHistoryViewModel history = new PatientHistoryViewModel();
 
     protected override async Task OnInitializedAsync()
     {
         await GetDiagnosis();
         await GetMedicine();
-    }
+        history.PatientId = id;
+        history.Medication = Medicines.Select(m => new CheckItem()
+        {
+            Id = m.Id,
+            Name = m.Name,
+            IsChecked = false
+        }).ToList(); ;
 
+    }
     //private void GetMedicine()
     //{
 
     //}
-    private string GetMultiSelectionText(List<string> x)
-    {
-        return $"{x.Count} Medicine{(x.Count > 1 ? "s have":" has")} been selected";
-    }
+    //private string GetMultiSelectionText(List<string> x)
+    //{
+    //    return $"{x.Count} Medicine{(x.Count > 1 ? "s have":" has")} been selected";
+    //}
 
 
 
@@ -99,12 +93,13 @@
             if(id != null)
             {
                 history.PatientId = id;
-                history.DiagnosisDate = System.DateTime.Today;
+                //history.DiagnosisDate = System.DateTime.Today;
 
-                x = await _service.AddMedicalHistoryAsync(history, Medicines);
+                x = await _service.AddMedicalHistoryAsync(history);
                 if(x.Data == true)
                 {
                     _snack.Add(x.Message, MudBlazor.Severity.Success);
+                    _nav.NavigateTo("/patients/details/" + id);
                 }
                 else
                 {
@@ -122,6 +117,6 @@
 
     private async Task GetMedicine()
     {
-        medic = await _service.GetMedicinesAsync();
+        Medicines = await _service.GetMedicinesAsync();
     }
 }

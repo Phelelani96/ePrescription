@@ -15,6 +15,6 @@ namespace ePrescription.Data
 
         public User? Patient { get; set; }
         public User? Doctor { get; set; }
-        //public ICollection<Prescription_Details> Prescription_Details {get; set; }
+        public ICollection<Prescription_Details> Prescription_Details {get; set; }
     }  
 }

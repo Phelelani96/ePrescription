@@ -1,6 +1,128 @@
 ﻿@page "/medication"
-<h3>Index</h3>
+@using ePrescription.Controllers
+@using ePrescription.Pages.Shared
+
+@inject MedicinesController _service
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+
+<h3>Medication List</h3>
+@if (medicine == null)
+{
+    <p>Loading . . .</p>
+}
+else
+{
+    <MudTable Items="@medicine" Hover="true" Filter="new Func<Medicine,bool>(FilterFunc1)">
+        <ToolBarContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Info" Href="/medication/create">Add Medicine</MudButton>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Dosage</MudTh>
+            <MudTh>Schedule</MudTh>
+            <MudTh>Active Ingredients</MudTh>
+            <MudTh>Options</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Dosage_FormId">@context.Dosage_Form.Description</MudTd>
+            <MudTd DataLabel="ScheduleId">@context.Schedule.Description</MudTd>
+            @*<MudTd DataLabel="Med_Ingredients">@context.Med_Ingredients.Count</MudTd>*@
+
+            <MudTd DataLabel="Med_Ingredients">
+                <ul>
+                    @foreach (var x in context.Med_Ingredients)
+                    {
+                        <li>@x.Ingredient.Description</li>
+                    }
+                </ul>
+            </MudTd>
+            
+            <MudTd>
+
+                <a class="btn btn-primary btn-sm" href="/medication/update/@context.Id"><span class="oi oi-pencil" aria-hidden="true"></span></a>
+               @* <a class="btn btn-primary btn-sm" href="/medication/details/@context.Id"><span class="oi oi-preview" aria-hidden="true"></span></a>*@
+                @*<MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large"><span class="oi oi-trash" aria-hidden="true"></span> </MudButton>*@
+            </MudTd>
+
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+}
+
 
 @code {
+    private string? searchString1;
+    private List<Data.Medicine> medicine { get; set; }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Medicine();
+    }
+
+    private bool FilterFunc1(Medicine med) => FilterFunc(med, searchString1);
+
+    private bool FilterFunc(Medicine med, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (med.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        //if (user.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        //if (user.IDNumber.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        //    return true;
+        return false;
+    }
+    //private async Task DeletePractice(int? id)
+    //{
+    //    var x = new ServiceResponse<bool>();
+
+    //    if (id != null)
+    //    {
+    //        var p = await _service.GetPracticeAsync(Convert.ToInt32(id));
+    //        if (p != null)
+    //        {
+    //            var parameters = new DialogParameters();
+    //            parameters.Add("ContentText", "Are you sure you want to delete " + p.Data.Name.ToString() + "?");
+    //            parameters.Add("ButtonText", "Delete");
+    //            parameters.Add("Color", Color.Error);
+
+    //            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+    //            var dialog = DialogService.Show<DeleteDialog>("Delete", parameters, options);
+
+    //            var result = await dialog.Result;
+
+    //            if (!result.Cancelled)
+    //            {
+    //                x = await _service.DeletePracticeAsync(p.Data.Id);
+    //                if (x.Success == true)
+    //                {
+    //                    _snackbar.Add(p.Data.Name + " Successfully deleted!", Severity.Error);
+    //                    await PracticeList();
+    //                }
+    //                else
+    //                {
+    //                    _snackbar.Add(p.Message, Severity.Warning);
+    //                }
+    //            }
+
+    //        }
+    //    }
+
+    //}
+
+    private async Task Medicine()
+    {
+        var P = await _service.Index();
+
+        medicine = P.Data;
+    }
 }

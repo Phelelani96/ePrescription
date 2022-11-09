@@ -1,0 +1,58 @@
+﻿@page "/ingredients/create"
+@using Microsoft.AspNetCore.Components.Authorization
+@using ePrescription.Controllers
+@using System.ComponentModel.DataAnnotations
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inject IngredientsController _service
+@inject NavigationManager _nav
+@inject ISnackbar _snackbar
+
+<h3>Add Ingredient</h3>
+
+
+<EditForm Model="@ingredient" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudGrid>
+        <MudItem xs="12" sm="12">
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Description"
+                                  @bind-Value="ingredient.Description" For="@(() => ingredient.Description)" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto"> Save </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+
+
+@code {
+
+    private Data.Ingredients ingredient = new Data.Ingredients();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+
+    private async void OnValidSubmit()
+    {
+
+        var x = await _service.Create(ingredient);
+        if (x.Success == true)
+        {
+            _snackbar.Add(x.Message, Severity.Success);
+            _nav.NavigateTo("/ingredients");
+        }
+        else
+        {
+            _snackbar.Add(x.Message, Severity.Warning);
+        }
+    }
+}

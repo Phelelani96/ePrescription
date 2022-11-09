@@ -104,7 +104,7 @@ namespace ePrescription.Controllers
                 var result = await _userManager.CreateAsync(pharmacist, "A" + pharmacist.FirstName + "123!");
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(pharmacist, Roles.Doctor.ToString());
+                    await _userManager.AddToRoleAsync(pharmacist, Roles.Pharmacist.ToString());
                     response.Data = true;
                     response.Success = true;
                     return response;

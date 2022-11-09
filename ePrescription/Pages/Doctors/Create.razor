@@ -115,14 +115,17 @@
 
             [Required]
             [EmailAddress]
+            [RegularExpression(@"^[^@\s]+@[^@\s]+\.(com|net|org|gov)$", ErrorMessage = "Invalid pattern.")]
             public string Email { get; set; }
 
             [Required]
             [StringLength(10, ErrorMessage = "{0} must be 10 characters", MinimumLength = 10)]
             [DisplayName("Phone Number")]
+            [Phone]
             public string PhoneNumber { get; set; }
 
             [Required]
+            [Range(1, 100000000, ErrorMessage = "Please select Condition")]
             public int QualificationId { get; set; }
 
             [Required]
@@ -131,6 +134,7 @@
             public string RegistrationNo { get; set; }
 
             [Required]
+            [Range(1, 100000000, ErrorMessage = "Please select Condition")]
             public int PracticeId { get; set; }
 
 

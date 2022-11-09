@@ -1,4 +1,4 @@
-﻿using ePrescription.Areas.Identity.Data;
+﻿ using ePrescription.Areas.Identity.Data;
 using System.ComponentModel.DataAnnotations;
 namespace ePrescription.Data
 {
@@ -22,6 +22,6 @@ namespace ePrescription.Data
 
         public Diagnosis? Diagnosis { get; set; }
 
-        public ICollection<Medical_History>? History { get; set; }
+        public ICollection<History_Medication>? History { get; set; }
     }
 }
